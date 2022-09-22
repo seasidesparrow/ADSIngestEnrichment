@@ -1,4 +1,3 @@
-import os
 from subprocess import Popen, PIPE
 
 try:
@@ -13,7 +12,7 @@ except (IOError, ImportError):
     long_description = ""
 
 with open('requirements.txt') as f:
-    required = f.read().splitlines()
+    REQUIRED = f.read().splitlines()
 
 
 def get_git_version(default="v0.0.1"):
@@ -22,18 +21,15 @@ def get_git_version(default="v0.0.1"):
         p.stderr.close()
         line = p.stdout.readlines()[0]
         line = line.strip()
-        return line.decode()
+        return line.decode('utf-8')
     except:
         return default
 
 setup(
     name='adsenrich',
     version=get_git_version(default="v0.0.1"),
-    classifiers=['Programming Language :: Python :: 3',
-                 'Programming Language :: Python :: 3.7',
-                 'Programming Language :: Python :: 3.8'],
     url='https://github.com/adsabs/ADSIngestEnrichment',
-    license='Gnu GPL',
+    license='GnuGPL',
     author="NASA/SAO ADS",
     description='ADS Ingest Enrichment',
     long_description=long_description,
@@ -41,10 +37,5 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=required,
-    #entry_points={
-    #      'kombu.serializers': [
-    #          'adsmsg = adsputils.serializer:register_args'
-    #      ]
-    #  }
+    install_requires=REQUIRED
   )

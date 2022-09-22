@@ -1,2 +1,2 @@
-adsenrich/bibcode_data
-adsenrich/bibcode_data/*.txt
+include adsenrich/bibcode_data
+include adsenrich/bibcode_data/*.txt
