@@ -29,7 +29,6 @@ class BibcodeGenerator(object):
             author_init = record['authors'][0]['name']['surname'][0]
             author_init = u2asc(author_init).upper()
         except Exception as err:
-            print('hi, what is your problem? %s' % str(err))
             author_init = '.'
         return author_init
 
