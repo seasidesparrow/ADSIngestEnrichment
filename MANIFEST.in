@@ -1,0 +1,2 @@
+include adsenrich/bibcode_data
+include adsenrich/bibcode_data/*.txt

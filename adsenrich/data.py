@@ -1,9 +1,8 @@
 import os
 
 # data files for bibstem selection
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '/bibcode_data/')
-ISSN2BIBSTEM_file = DATA_DIR + 'issn2bibstem.txt'
-NAME2BIBSTEM_file = DATA_DIR + 'name2bibstem.txt'
+ISSN2BIBSTEM_file = os.path.realpath(os.path.join(os.path.dirname(__file__), './')) + '/bibcode_data/issn2bibstem.txt'
+NAME2BIBSTEM_file = os.path.realpath(os.path.join(os.path.dirname(__file__), './')) + '/bibcode_data/name2bibstem.txt'
 
 ISSN2BIBSTEM = dict()
 with open(ISSN2BIBSTEM_file, 'r') as fi:
