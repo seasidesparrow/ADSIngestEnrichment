@@ -22,4 +22,4 @@ IOP_BIBSTEMS = ['ApJ..', 'JCAP.', 'EJPh.', 'RAA..', 'PhyM.', 'JPhD.', 'AJ...', '
 
 OUP_BIBSTEMS = ['MNRAS', 'PASJ.', 'PTEP.', 'GeoJI']
 
-AIP_BIBSTEMS = ['AIPA.', 'AIPC.', 'ApPhL', 'APL..', 'APLM.', 'APLP.', 'AVSQS', 'AmJPh', 'ApPRv', 'Chaos', 'JAP..', 'JChPh', 'JMP..', 'JPCRD', 'LTP..', 'PhFl.', 'PhPl.', 'PhTea', 'RScI']
+AIP_BIBSTEMS = ['AIPA.', 'AIPC.', 'ApPhL', 'APL..', 'APLM.', 'APLP.', 'AVSQS', 'AmJPh', 'ApPRv', 'Chaos', 'JAP..', 'JChPh', 'JMP..', 'JPCRD', 'LTP..', 'PhFl.', 'PhPl.', 'PhTea', 'RScI.']
