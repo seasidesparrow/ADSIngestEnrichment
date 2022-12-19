@@ -242,6 +242,24 @@ class BibcodeGenerator(object):
                            # logger.debug('warning: issue number AND letter indicator!')
                 else:
                     issue = self._int_to_letter(self._get_issue(record))
+
+
+            elif bibstem in SPRINGER_BIBSTEMS:
+                # IOP get converted_pagenum/letters for six+ digit pages
+                (pageid, is_letter) = self._get_normal_pagenum(record)
+                if bibstem == 'JHEP.':
+                    try:
+                        issue = self._get_issue(record)
+                        volume = issue.rjust(4, '.')
+                        issue = None
+                    except:
+                        issue = None
+                if is_letter:
+                    if not issue:
+                        issue=is_letter
+                    # else:
+                       # logger.debug('warning: issue number AND letter indicator!')
+
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
