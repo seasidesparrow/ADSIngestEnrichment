@@ -166,13 +166,14 @@ class BibcodeGenerator(object):
         else:
             raise BibstemException('Bibstem not found.')
 
-    def make_bibcode(self, record):
+    def make_bibcode(self, record, bibstem=None):
         try:
             year = self._get_pubyear(record)
         except Exception as err:
             year = None
         try:
-            bibstem = self._get_bibstem(record)
+            if not bibstem:
+                bibstem = self._get_bibstem(record)
         except Exception as err:
             bibstem = None
         try:
