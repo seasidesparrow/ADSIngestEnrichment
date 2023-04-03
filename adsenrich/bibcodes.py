@@ -43,7 +43,6 @@ class BibcodeGenerator(object):
     def _get_volume(self, record):
         try:
             volume = record['publication']['volumeNum']
-            volume = volume
         except Exception as err:
             volume = '.'
         return volume
