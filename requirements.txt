@@ -1,1 +1,2 @@
+git+https://github.com/adsabs/ADSPipelineUtils.git@v1.4.3
 unidecode==0.4.21

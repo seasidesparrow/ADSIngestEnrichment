@@ -1,5 +1,5 @@
 import string
-from adsenrich.utils import u2asc
+from adsenrich.utils import u2asc, issn2bib
 from adsenrich.data import *
 
 class BibstemException(Exception):
@@ -13,9 +13,8 @@ class NoBibcodeException(Exception):
 
 class BibcodeGenerator(object):
 
-    def __init__(self, bibstem=None, issn2bibstem=ISSN2BIBSTEM, name2bibstem=NAME2BIBSTEM):
-        self.issn2bibstem = issn2bibstem
-        self.name2bibstem = name2bibstem
+    def __init__(self, bibstem=None, token=None)
+        self.token = token
         self.bibstem = bibstem
 
     def _int_to_letter(self, integer):
@@ -134,32 +133,23 @@ class BibcodeGenerator(object):
         else:
             bibstem = None
             try:
-                if self.issn2bibstem:
-                    issn_rec = []
+                issn_rec = []
+                try:
+                    issn_rec = record['publication']['ISSN']
+                except Exception as err:
+                    pass
+                for i in issn_rec:
+                    issn = i.get('issnString', None)
                     try:
-                        issn_rec = record['publication']['ISSN']
+                        if len(issn) == 8:
+                            issn = issn[0:4] + '-' + issn[4:]
                     except Exception as err:
                         pass
-                    for i in issn_rec:
-                        issn = i.get('issnString', None)
-                        try:
-                            if len(issn) == 8:
-                                issn = issn[0:4] + '-' + issn[4:]
-                        except Exception as err:
-                            pass
-                        if issn:
-                            if not bibstem:
-                                bibstem = self.issn2bibstem.get(issn, None)
+                    if issn:
+                        if not bibstem:
+                            bibstem = issn2bib(token=self.token, issn=issn)
             except Exception as err:
                 pass
-            if not bibstem:
-                try:
-                    if self.name2bibstem:
-                        pub_name = record['publication']['pubName']
-                        bibstem = self.name2bibstem.get(pub_name, None)
-                except Exception as err:
-                    print('bibstem err: %s' % err)
-                    pass
         if bibstem:
             return bibstem
         else:
@@ -276,6 +266,8 @@ class BibcodeGenerator(object):
 
             try:
                 bibcode = year + bibstem + volume + issue + pageid + author_init
+                if len(bibcode) != 19:
+                    raise Exception('Malformed bibcode, wrong length!')
             except Exception as err:
                 print('something is really wrong: %s' % err)
                 bibcode = None
