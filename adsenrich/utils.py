@@ -38,9 +38,9 @@ def u2asc(input):
     return output
 
 
-def issn2bib(token=None, issn=None):
-    if issn and token:
-        url_base = "https://api.adsabs.harvard.edu/v1/journals/issn/"
+def issn2bib(token=None, api_url=None, issn=None):
+    if issn and token and api_url:
+        url_base = api_url + "/v1/journals/issn/"
         url = url_base + issn
         token_dict = {"Authorization": "Bearer %s" % token}
         try:

@@ -13,8 +13,9 @@ class NoBibcodeException(Exception):
 
 class BibcodeGenerator(object):
 
-    def __init__(self, bibstem=None, token=None)
-        self.token = token
+    def __init__(self, bibstem=None, token=None, url=None)
+        self.api_token = token
+        self.api_url = url
         self.bibstem = bibstem
 
     def _int_to_letter(self, integer):
@@ -147,7 +148,9 @@ class BibcodeGenerator(object):
                         pass
                     if issn:
                         if not bibstem:
-                            bibstem = issn2bib(token=self.token, issn=issn)
+                            bibstem = issn2bib(token=self.api_token,
+                                               url=self.api_url,
+                                               issn=issn)
             except Exception as err:
                 pass
         if bibstem:
