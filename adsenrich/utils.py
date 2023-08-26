@@ -1,5 +1,7 @@
 import sys
 import unidecode
+import requests
+import json
 
 class UnicodeDecodeError(Exception):
     pass
@@ -34,3 +36,19 @@ def u2asc(input):
         output = output.encode('utf-8')
 
     return output
+
+
+def issn2bib(token=None, url=None, issn=None):
+    if issn and token and url:
+        url_base = url + "/journals/issn/"
+        request_url = url_base + issn
+        token_dict = {"Authorization": "Bearer %s" % token}
+        try:
+            req = requests.get(request_url, headers=token_dict)
+        except Exception as err:
+            pass
+        else:
+            if req.status_code == 200:
+                result = req.json()
+                return result.get("issn", {}).get("bibstem", None)
+    return

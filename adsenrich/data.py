@@ -1,20 +1,3 @@
-import os
-
-# data files for bibstem selection
-ISSN2BIBSTEM_file = os.path.realpath(os.path.join(os.path.dirname(__file__), './')) + '/bibcode_data/issn2bibstem.txt'
-NAME2BIBSTEM_file = os.path.realpath(os.path.join(os.path.dirname(__file__), './')) + '/bibcode_data/name2bibstem.txt'
-
-ISSN2BIBSTEM = dict()
-with open(ISSN2BIBSTEM_file, 'r') as fi:
-    for l in fi.readlines():
-        (issn, bibstem) = l.strip().split('\t')
-        ISSN2BIBSTEM[issn] = bibstem
-
-NAME2BIBSTEM = dict()
-with open(NAME2BIBSTEM_file, 'r') as fi:
-    for l in fi.readlines():
-        (bibstem, name) = l.strip().split('\t')
-        NAME2BIBSTEM[name] = bibstem
 
 APS_BIBSTEMS = ['PhRvL', 'PhRvX', 'RvMP.', 'PhRvA', 'PhRvB', 'PhRvC', 'PhRvD', 'PhRvE', 'PhRvS', 'PhRvS', 'PhRvP', 'PhRvF', 'PhRvM', 'PRPER', 'PRSTP', 'PhRv.', 'PhRvI', 'PhyOJ', 'PhRvR']
 
