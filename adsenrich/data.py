@@ -1,4 +1,3 @@
-import os
 
 APS_BIBSTEMS = ['PhRvL', 'PhRvX', 'RvMP.', 'PhRvA', 'PhRvB', 'PhRvC', 'PhRvD', 'PhRvE', 'PhRvS', 'PhRvS', 'PhRvP', 'PhRvF', 'PhRvM', 'PRPER', 'PRSTP', 'PhRv.', 'PhRvI', 'PhyOJ', 'PhRvR']
 

@@ -1,6 +1,11 @@
+import os
 import string
 from adsenrich.utils import u2asc, issn2bib
 from adsenrich.data import *
+from adsputils import load_config
+
+proj_home = os.getenv("PWD", None)
+conf = load_config(proj_home=proj_home)
 
 class BibstemException(Exception):
     pass
@@ -13,7 +18,12 @@ class NoBibcodeException(Exception):
 
 class BibcodeGenerator(object):
 
-    def __init__(self, bibstem=None, token=None, url=None)
+    def __init__(self, bibstem=None, token=None, url=None):
+        if not token:
+            token = conf.get("_API_TOKEN", None)
+        if not url:
+            url = conf.get("_API_URL", None)
+
         self.api_token = token
         self.api_url = url
         self.bibstem = bibstem
@@ -121,8 +131,6 @@ class BibcodeGenerator(object):
                 if page_a:
                     if not is_letter:
                         is_letter = page_a
-                    # else:
-                    #     logger.debug('warning, converted pagenum *and* issue letter found (%s, %s)' % (page_a, is_letter))
         except Exception as err:
             page = None
             is_letter = None
@@ -203,8 +211,6 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue=is_letter
-                    # else:
-                       # logger.debug('warning: issue number AND letter indicator!')
 
             elif bibstem in APS_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages
@@ -212,8 +218,6 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue=is_letter
-                    # else:
-                       # logger.debug('warning: issue number AND letter indicator!')
 
             elif bibstem in OUP_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages
@@ -221,8 +225,6 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue=is_letter
-                    # else:
-                       # logger.debug('warning: issue number AND letter indicator!')
 
             elif bibstem in AIP_BIBSTEMS:
                 #AIP: AIP Conf gets special handling
@@ -231,8 +233,6 @@ class BibcodeGenerator(object):
                     if is_letter:
                         if not issue:
                             issue=is_letter
-                        # else:
-                           # logger.debug('warning: issue number AND letter indicator!')
                 else:
                     issue = self._int_to_letter(self._get_issue(record))
 
@@ -250,16 +250,12 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue=is_letter
-                    # else:
-                       # logger.debug('warning: issue number AND letter indicator!')
 
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
                     if not issue:
                         issue = is_letter
-                    # else:
-                       # logger.debug('warning: issue number AND letter indicator!')
 
             if not issue:
                 pageid = pageid.rjust(5, '.')
@@ -272,6 +268,5 @@ class BibcodeGenerator(object):
                 if len(bibcode) != 19:
                     raise Exception('Malformed bibcode, wrong length!')
             except Exception as err:
-                print('something is really wrong: %s' % err)
                 bibcode = None
             return bibcode

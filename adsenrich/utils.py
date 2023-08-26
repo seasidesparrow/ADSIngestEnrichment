@@ -38,13 +38,13 @@ def u2asc(input):
     return output
 
 
-def issn2bib(token=None, api_url=None, issn=None):
-    if issn and token and api_url:
-        url_base = api_url + "/v1/journals/issn/"
-        url = url_base + issn
+def issn2bib(token=None, url=None, issn=None):
+    if issn and token and url:
+        url_base = url + "/journals/issn/"
+        request_url = url_base + issn
         token_dict = {"Authorization": "Bearer %s" % token}
         try:
-            req = requests.get(url, headers=token_dict)
+            req = requests.get(request_url, headers=token_dict)
         except Exception as err:
             pass
         else:
