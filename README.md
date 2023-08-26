@@ -14,4 +14,6 @@ or the ADS Journals API url and a valid service token,
 bibgen = BibcodeGenerator(token="my ads api token", url="https://api.adsabs.harvard.edu")
 ```
 
+You can omit setting the token and url in your code if you have the set the environment variables `_API_TOKEN` and `_API_URL` with appropriate data.
+
 Matthew Templeton, ADS
