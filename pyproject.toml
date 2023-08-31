@@ -20,7 +20,7 @@ packages = [
 
 dependencies = [
     'unidecode==0.4.21',
-    'adsputils @ git+https://github.com/adsabs/ADSPipelineUtils@v1.4.3#egg=adsputils',
+    'adsputils @ git+https://github.com/adsabs/ADSPipelineUtils@v1.4.3',
 ]
 
 
