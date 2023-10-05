@@ -53,6 +53,9 @@ class BibcodeGenerator(object):
     def _get_volume(self, record):
         try:
             volume = record['publication']['volumeNum']
+            if "-" in volume:
+                vol_list = volume.strip().split("-")
+                volume = vol_list[0]
         except Exception as err:
             volume = '.'
         return volume
