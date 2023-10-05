@@ -1,6 +1,6 @@
 [project]
 name = "adsenrich"
-version = "0.0.1"
+version = "1.0.0"
 description = "ADS Enrichment Pipeline library"
 authors = [{ name = "Matthew Templeton", email = "matthew.templeton@cfa.harvard.edu"}]
 license = { text = "MIT" }
