@@ -36,7 +36,8 @@ class BibcodeGenerator(object):
 
     def _get_author_init(self, record):
         try:
-            author_init = record['authors'][0]['name']['surname'][0]
+            author_init = record['authors'][0]['name']['surname']
+            author_init = author_init.strip()[0]
             author_init = u2asc(author_init).upper()
         except Exception as err:
             author_init = '.'
