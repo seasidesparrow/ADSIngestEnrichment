@@ -153,7 +153,7 @@ class BibcodeGenerator(object):
                 issn_publisher = record.get("publication", {}).get("publisher", None)
                 if issn_publisher == "Zenodo":
                     bibstem = "zndo."
-            else:
+            if not bibstem:
                 issn_rec = []
                 issn_rec = record.get("publication", {}).get("ISSN", None)
                 for i in issn_rec:
@@ -191,7 +191,6 @@ class BibcodeGenerator(object):
         except Exception as err:
             author_init = "."
         if not (year and bibstem):
-            print("YEAR: %s\tBIBSTEM: %s" % (year,bibstem))
             raise NoBibcodeException("You're missing year and or bibstem -- no bibcode can be made!")
         else:
             bibstem = bibstem.ljust(5, ".")
