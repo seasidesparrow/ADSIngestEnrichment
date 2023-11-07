@@ -35,17 +35,21 @@ class BibcodeGenerator(object):
             return integer
 
     def _get_author_init(self, record):
+        author_init = "."
         try:
-            author_init = record['authors'][0]['name']['surname']
-            author_init = author_init.strip()[0]
-            author_init = u2asc(author_init).upper()
-        except Exception as err:
-            author_init = '.'
+            author_init = record.get("authors", [])[0]["name"]["surname"]
+            first_auth = record.get("authors", [])[0]
+            if first_auth:
+                author_init = first_auth.get("name", {}).get("surname", None)
+                author_init = author_init.strip()[0]
+                author_init = u2asc(author_init).upper()
+        except:
+            pass
         return author_init
 
     def _get_pubyear(self, record):
         try:
-            pub_year = record['publication']['pubYear']
+            pub_year = record.get("publication", {}).get("pubYear", None)
         except Exception as err:
             raise NoPubYearException(err)
         else:
@@ -53,27 +57,27 @@ class BibcodeGenerator(object):
 
     def _get_volume(self, record):
         try:
-            volume = record['publication']['volumeNum']
+            volume = record.get("publication", {}).get("volumeNum", None)
             if "-" in volume:
                 vol_list = volume.strip().split("-")
                 volume = vol_list[0]
         except Exception as err:
-            volume = '.'
+            volume = "."
         return volume
 
     def _get_issue(self, record):
         try:
-            issue = str(record['publication']['issueNum'])
+            issue = str(record.get("publication", {}).get("issueNum", None))
         except Exception as err:
             issue = None
         return issue
 
     def _get_pagenum(self, record):
-        pagination = record.get('pagination', None)
+        pagination = record.get("pagination", None)
         if pagination:
-            fpage = pagination.get('firstPage', None)
-            epage = pagination.get('electronicID', None)
-            rpage = pagination.get('pageRange', None)
+            fpage = pagination.get("firstPage", None)
+            epage = pagination.get("electronicID", None)
+            rpage = pagination.get("pageRange", None)
             if fpage:
                 page = fpage
             elif epage:
@@ -81,32 +85,32 @@ class BibcodeGenerator(object):
             elif rpage:
                 page = rpage
             else:
-                page = '.'
-            page = page.replace(',', '')
+                page = "."
+            page = page.replace(",", "")
             return page
         else:
-            return '.'
+            return "."
 
     def _deletter_page(self, page):
         is_letter = None
-        if 'L' in page or 'l' in page:
-            page = page.replace('L', '.').replace('l', '.')
-            is_letter = 'L'
-        elif 'P' in page or 'p' in page:
-            page = page.replace('P', '').replace('p', '')
-            is_letter = 'P'
-        elif 'S' in page or 's' in page:
-            page = page.replace('S', '').replace('s', '')
-            is_letter = 'S'
-        elif 'A' in page:
-            page = page.replace('A', '')
-            is_letter = 'A'
-        elif 'C' in page:
-            page = page.replace('C', '')
-            is_letter = 'C'
-        elif 'E' in page:
-            page = page.replace('E', '')
-            is_letter = 'E'
+        if "L" in page or "l" in page:
+            page = page.replace("L", ".").replace("l", ".")
+            is_letter = "L"
+        elif "P" in page or "p" in page:
+            page = page.replace("P", "").replace("p", "")
+            is_letter = "P"
+        elif "S" in page or "s" in page:
+            page = page.replace("S", "").replace("s", "")
+            is_letter = "S"
+        elif "A" in page:
+            page = page.replace("A", "")
+            is_letter = "A"
+        elif "C" in page:
+            page = page.replace("C", "")
+            is_letter = "C"
+        elif "E" in page:
+            page = page.replace("E", "")
+            is_letter = "E"
         return (page, is_letter)
 
     def _get_normal_pagenum(self, record):
@@ -117,7 +121,7 @@ class BibcodeGenerator(object):
             if len(str(page)) >= 5:
                 page = str(page)[-5:]
             else:
-                page = page.rjust(4, '.')
+                page = page.rjust(4, ".")
             if is_letter:
                 page = page[-4:]
         return (page, is_letter)
@@ -145,30 +149,28 @@ class BibcodeGenerator(object):
             return self.bibstem
         else:
             bibstem = None
-            try:
+            if not bibstem:
+                issn_publisher = record.get("publication", {}).get("publisher", None)
+                if issn_publisher == "Zenodo":
+                    bibstem = "zndo."
+            if not bibstem:
                 issn_rec = []
-                try:
-                    issn_rec = record['publication']['ISSN']
-                except Exception as err:
-                    pass
+                issn_rec = record.get("publication", {}).get("ISSN", None)
                 for i in issn_rec:
-                    issn = i.get('issnString', None)
-                    try:
-                        if len(issn) == 8:
-                            issn = issn[0:4] + '-' + issn[4:]
-                    except Exception as err:
-                        pass
+                    issn = i.get("issnString", None)
                     if issn:
+                        issn = str(issn)
+                        if len(issn) == 8:
+                            issn = issn[0:4] + "-" + issn[4:]
                         if not bibstem:
                             bibstem = issn2bib(token=self.api_token,
                                                url=self.api_url,
                                                issn=issn)
-            except Exception as err:
-                pass
+ 
         if bibstem:
             return bibstem
         else:
-            raise BibstemException('Bibstem not found.')
+            raise BibstemException("Bibstem not found.")
 
     def make_bibcode(self, record, bibstem=None):
         try:
@@ -183,35 +185,35 @@ class BibcodeGenerator(object):
         try:
             volume = self._get_volume(record)
         except Exception as err:
-            volume = ''
+            volume = ""
         try:
             author_init = self._get_author_init(record)
         except Exception as err:
-            author_init = ''
+            author_init = "."
         if not (year and bibstem):
             raise NoBibcodeException("You're missing year and or bibstem -- no bibcode can be made!")
         else:
-            bibstem = bibstem.ljust(5, '.')
-            volume = volume.rjust(4, '.')
-            author_init = author_init.rjust(1, '.')
+            bibstem = bibstem.ljust(5, ".")
+            volume = volume.rjust(4, ".")
+            author_init = author_init.rjust(1, ".")
             issue = None
 
             # Special bibstem, page, volume, issue handling
             if bibstem in IOP_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
-                if bibstem == 'JCAP.':
+                if bibstem == "JCAP.":
                     # JCAP is an IOP journal
                     try:
                         issue = self._get_issue(record)
-                        volume = issue.rjust(4, '.')
+                        volume = issue.rjust(4, ".")
                         issue = None
                     except:
                         issue = None
-                elif bibstem == 'ApJL.':
+                elif bibstem == "ApJL.":
                     # ApJ/L are IOP journals
-                    bibstem = 'ApJ..'
-                    issue = 'L'
+                    bibstem = "ApJ.."
+                    issue = "L"
                 if is_letter:
                     if not issue:
                         issue=is_letter
@@ -233,7 +235,7 @@ class BibcodeGenerator(object):
             elif bibstem in AIP_BIBSTEMS:
                 #AIP: AIP Conf gets special handling
                 (pageid, is_letter) = self._get_converted_pagenum(record)
-                if bibstem == 'AIPC.':
+                if bibstem == "AIPC.":
                     if is_letter:
                         if not issue:
                             issue=is_letter
@@ -244,16 +246,36 @@ class BibcodeGenerator(object):
             elif bibstem in SPRINGER_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_normal_pagenum(record)
-                if bibstem == 'JHEP.':
+                if bibstem == "JHEP.":
                     try:
                         issue = self._get_issue(record)
-                        volume = issue.rjust(4, '.')
+                        volume = issue.rjust(4, ".")
                         issue = None
                     except:
                         issue = None
                 if is_letter:
                     if not issue:
                         issue=is_letter
+
+            elif bibstem in ["zndo."]:
+                try:
+                    zenodo_pid = record.get("persistentIDs", {})
+                    zenodo_doi = None
+                    for d in zenodo_pid:
+                        if d.get("DOI", None):
+                            zenodo_doi = d.get("DOI")
+                    if zenodo_doi:
+                        zenodo_id = zenodo_doi.split("/")[-1].replace("zenodo.", "")
+                        pageid = zenodo_id[-4:].rjust(4, ".")
+                        zenodo_id = zenodo_id[0:-4]
+                        if zenodo_id:
+                            issue = zenodo_id[-1]
+                            zenodo_id = zenodo_id[0:-1]
+                        else:
+                            issue = "."
+                        volume = zenodo_id.rjust(4, ".")
+                except:
+                    pass
 
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
@@ -262,15 +284,15 @@ class BibcodeGenerator(object):
                         issue = is_letter
 
             if not issue:
-                pageid = pageid.rjust(5, '.')
-                issue = ''
+                pageid = pageid.rjust(5, ".")
+                issue = ""
             else:
-                pageid = pageid.rjust(4, '.')
+                pageid = pageid.rjust(4, ".")
 
             try:
                 bibcode = year + bibstem + volume + issue + pageid + author_init
                 if len(bibcode) != 19:
-                    raise Exception('Malformed bibcode, wrong length!')
+                    raise Exception("Malformed bibcode, wrong length!")
             except Exception as err:
                 bibcode = None
             return bibcode
