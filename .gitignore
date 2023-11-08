@@ -50,6 +50,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.tmp/
 
 # Translations
 *.mo
@@ -132,3 +133,5 @@ dmypy.json
 /references
 *.json
 *.xml
+local_config.py
+.pre-commit-config.yaml

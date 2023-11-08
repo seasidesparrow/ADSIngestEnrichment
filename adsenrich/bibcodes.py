@@ -1,23 +1,28 @@
 import os
 import string
-from adsenrich.utils import u2asc, issn2bib
-from adsenrich.data import *
+
 from adsputils import load_config
+
+from adsenrich.data import *
+from adsenrich.utils import issn2info, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
 
+
 class BibstemException(Exception):
     pass
+
 
 class NoPubYearException(Exception):
     pass
 
+
 class NoBibcodeException(Exception):
     pass
 
-class BibcodeGenerator(object):
 
+class BibcodeGenerator(object):
     def __init__(self, bibstem=None, token=None, url=None):
         if not token:
             token = conf.get("_API_TOKEN", None)
@@ -163,10 +168,12 @@ class BibcodeGenerator(object):
                         if len(issn) == 8:
                             issn = issn[0:4] + "-" + issn[4:]
                         if not bibstem:
-                            bibstem = issn2bib(token=self.api_token,
-                                               url=self.api_url,
-                                               issn=issn)
- 
+                            bibstem = issn2info(
+                                token=self.api_token,
+                                url=self.api_url,
+                                issn=issn,
+                                return_info="bibstem",
+                            )
         if bibstem:
             return bibstem
         else:
@@ -191,7 +198,9 @@ class BibcodeGenerator(object):
         except Exception as err:
             author_init = "."
         if not (year and bibstem):
-            raise NoBibcodeException("You're missing year and or bibstem -- no bibcode can be made!")
+            raise NoBibcodeException(
+                "You're missing year and or bibstem -- no bibcode can be made!"
+            )
         else:
             bibstem = bibstem.ljust(5, ".")
             volume = volume.rjust(4, ".")
@@ -216,32 +225,31 @@ class BibcodeGenerator(object):
                     issue = "L"
                 if is_letter:
                     if not issue:
-                        issue=is_letter
+                        issue = is_letter
 
             elif bibstem in APS_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if is_letter:
                     if not issue:
-                        issue=is_letter
+                        issue = is_letter
 
             elif bibstem in OUP_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if is_letter:
                     if not issue:
-                        issue=is_letter
+                        issue = is_letter
 
             elif bibstem in AIP_BIBSTEMS:
-                #AIP: AIP Conf gets special handling
+                # AIP: AIP Conf gets special handling
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if bibstem == "AIPC.":
                     if is_letter:
                         if not issue:
-                            issue=is_letter
+                            issue = is_letter
                 else:
                     issue = self._int_to_letter(self._get_issue(record))
-
 
             elif bibstem in SPRINGER_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
@@ -255,7 +263,27 @@ class BibcodeGenerator(object):
                         issue = None
                 if is_letter:
                     if not issue:
-                        issue=is_letter
+                        issue = is_letter
+
+            elif bibstem in ["zndo."]:
+                try:
+                    zenodo_pid = record.get("persistentIDs", {})
+                    zenodo_doi = None
+                    for d in zenodo_pid:
+                        if d.get("DOI", None):
+                            zenodo_doi = d.get("DOI")
+                    if zenodo_doi:
+                        zenodo_id = zenodo_doi.split("/")[-1].replace("zenodo.", "")
+                        pageid = zenodo_id[-4:].rjust(4, ".")
+                        zenodo_id = zenodo_id[0:-4]
+                        if zenodo_id:
+                            issue = zenodo_id[-1]
+                            zenodo_id = zenodo_id[0:-1]
+                        else:
+                            issue = "."
+                        volume = zenodo_id.rjust(4, ".")
+                except:
+                    pass
 
             elif bibstem in ["zndo."]:
                 try:

@@ -1,2 +1,0 @@
-_API_TOKEN=None
-_API_URL=None
