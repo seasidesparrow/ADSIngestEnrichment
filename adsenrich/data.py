@@ -519,4 +519,6 @@ REFSOURCE_DICT = {
     "iop": "iopft.xml",
     "oup": "oupft.xml",
     "pnas": "pnas.xml",
+    "cr": "xref.xml",
+    "jats": "jats.xml"
 }
