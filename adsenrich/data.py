@@ -122,12 +122,16 @@ IOP_BIBSTEMS = [
     "PPS..",
     "JPhC.",
     "JPhF.",
+    "ERH..",
     "IJExM",
     "ECSTr",
     "JInst",
+    "ERCli",
+    "EREco",
     "NanoE",
     "ECSSP",
     "ECSAd",
+    "ECSIn",
 ]
 
 OUP_BIBSTEMS = ["MNRAS", "PASJ.", "PTEP.", "GeoJI"]
