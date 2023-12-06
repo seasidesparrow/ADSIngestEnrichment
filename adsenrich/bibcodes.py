@@ -226,6 +226,9 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue = is_letter
+                if issue and (len(pageid) > 4):
+                    pageid = pageid[-4:]
+                
 
             elif bibstem in APS_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages

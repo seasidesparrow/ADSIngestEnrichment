@@ -524,5 +524,8 @@ REFSOURCE_DICT = {
     "oup": "oupft.xml",
     "pnas": "pnas.xml",
     "cr": "xref.xml",
-    "jats": "jats.xml"
+    "jats": "jats.xml",
+    "egu": "egu.xml",
+    "nlm": "nlm.xml",
+    "copernicus": "copernicus.xml",
 }
