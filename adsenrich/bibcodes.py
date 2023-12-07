@@ -116,6 +116,9 @@ class BibcodeGenerator(object):
         elif "E" in page:
             page = page.replace("E", "")
             is_letter = "E"
+        elif "T" in page or "t" in page:
+            page = page.replace("T", "").replace("t", ".")
+            is_letter = "T"
         return (page, is_letter)
 
     def _get_normal_pagenum(self, record):
