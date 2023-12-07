@@ -122,12 +122,16 @@ IOP_BIBSTEMS = [
     "PPS..",
     "JPhC.",
     "JPhF.",
+    "ERH..",
     "IJExM",
     "ECSTr",
     "JInst",
+    "ERCli",
+    "EREco",
     "NanoE",
     "ECSSP",
     "ECSAd",
+    "ECSIn",
 ]
 
 OUP_BIBSTEMS = ["MNRAS", "PASJ.", "PTEP.", "GeoJI"]
@@ -519,4 +523,9 @@ REFSOURCE_DICT = {
     "iop": "iopft.xml",
     "oup": "oupft.xml",
     "pnas": "pnas.xml",
+    "cr": "xref.xml",
+    "jats": "jats.xml",
+    "egu": "egu.xml",
+    "nlm": "nlm.xml",
+    "copernicus": "copernicus.xml",
 }

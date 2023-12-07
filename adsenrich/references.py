@@ -77,6 +77,7 @@ class ReferenceWriter(object):
             # Use journals/issn API to get the publisher name using ISSN
             issn_rec = []
             issn = []
+            file_ext = None
             if self.data.get("publication").get("ISSN"):
                 issn_rec = self.data["publication"]["ISSN"]
                 for i in issn_rec:
@@ -90,17 +91,25 @@ class ReferenceWriter(object):
                             issn=issn,
                             return_info="publisher",
                         )
+                    else:
+                        publisher = None
 
                     if publisher:
                         publisher = str(publisher).lower()
-                        if publisher == "pnas":
-                            file_ext = publisher + ".xml"
-                        else:
-                            file_ext = publisher + "ft.xml"
+                        # fulltext_body = self.data.get("fulltext", {}).get("body", None)
+                        # if publisher == "pnas" or not fulltext_body:
+                        #     file_ext = publisher + ".xml"
+                        file_ext = self.refsource_dict.get(publisher, None)
+                        if not file_ext:
+                            if publisher == "iop" or publisher == "oup":
+                                file_ext = publisher + "ft.xml"
+                            else:
+                                file_ext = publisher + ".xml"
                         continue
 
             if not issn or not publisher:
-                file_ext = self.refsource_dict.get(self.reference_source, "generic.txt")
+                if not file_ext:
+                    file_ext = self.refsource_dict.get(self.reference_source, ".xml")
 
             bibstem = self.bibcode[4:9].rstrip(".")
             volume = self.data.get("publication", {}).get("volumeNum", "").rjust(4, "0")
