@@ -132,6 +132,7 @@ IOP_BIBSTEMS = [
     "ECSSP",
     "ECSAd",
     "ECSIn",
+    "MatFu",
 ]
 
 OUP_BIBSTEMS = ["MNRAS", "PASJ.", "PTEP.", "GeoJI"]
