@@ -41,13 +41,20 @@ class BibcodeGenerator(object):
 
     def _get_author_init(self, record):
         author_init = "."
+        special_char = {'&ETH;': 'E',
+                        '&eth;': 'e',
+                        '&THORN;': 'TH',
+                        '&thorn;': 'th'}
         try:
             author_init = record.get("authors", [])[0]["name"]["surname"]
             first_auth = record.get("authors", [])[0]
             if first_auth:
-                author_init = first_auth.get("name", {}).get("surname", None)
-                author_init = author_init.strip()[0]
-                author_init = u2asc(author_init).upper()
+                author_last = first_auth.get("name", {}).get("surname", None)
+                author_last = author_last.strip()
+                author_last = u2asc(author_last)
+                for k, v in special_char.items():
+                    author_last = author_last.replace(k, v)
+                author_init = author_last[0].upper()
         except:
             pass
         return author_init
@@ -116,6 +123,9 @@ class BibcodeGenerator(object):
         elif "E" in page:
             page = page.replace("E", "")
             is_letter = "E"
+        elif "T" in page or "t" in page:
+            page = page.replace("T", "").replace("t", ".")
+            is_letter = "T"
         return (page, is_letter)
 
     def _get_normal_pagenum(self, record):
