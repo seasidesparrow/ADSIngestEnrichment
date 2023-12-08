@@ -19,6 +19,7 @@ def u2asc(input):
     """
 
     # TODO If used on anything but author names, add special handling for math symbols and other special chars
+    output = None
     if sys.version_info < (3,):
         test_type = unicode
     else:
