@@ -237,7 +237,7 @@ class BibcodeGenerator(object):
                     # JaJAP/JJAPS are IOP journals
                     issue = self._get_issue(record)
                     if "S" in issue:
-                        bibstem == "JJAPS"
+                        bibstem = "JJAPS"
                 if is_letter:
                     if not issue:
                         issue = is_letter
