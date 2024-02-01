@@ -1,3 +1,16 @@
+import os
+
+issnfile = "/proj/ads/abstracts/config/journalsdb/PIPELINE/data/issn_identifiers"
+ISSN_DICT = {}
+if os.path.exists(issnfile):
+    with open(issnfile, "r") as fi:
+        for l in fi.readlines():
+            try:
+                (bibstem, id_type, id_value) = l.rstrip().split("\t")
+                ISSN_DICT[id_value] = bibstem
+            except Exception as err:
+                pass
+
 APS_BIBSTEMS = [
     "PhRvL",
     "PhRvX",
@@ -529,4 +542,7 @@ REFSOURCE_DICT = {
     "egu": "egu.xml",
     "nlm": "nlm.xml",
     "copernicus": "copernicus.xml",
+    "wiley": "wiley.xml",
+    "mdpi": "mdpi.xml",
+    "edp": "edp.xml",
 }

@@ -177,6 +177,7 @@ class BibcodeGenerator(object):
                         issn = str(issn)
                         if len(issn) == 8:
                             issn = issn[0:4] + "-" + issn[4:]
+                        bibstem = ISSN_DICT.get(issn, None)
                         if not bibstem:
                             bibstem = issn2info(
                                 token=self.api_token,
@@ -233,6 +234,11 @@ class BibcodeGenerator(object):
                     # ApJ/L are IOP journals
                     bibstem = "ApJ.."
                     issue = "L"
+                elif bibstem == "JaJAP":
+                    # JaJAP/JJAPS are IOP journals
+                    issue = self._get_issue(record)
+                    if "S" in issue:
+                        bibstem = "JJAPS"
                 if is_letter:
                     if not issue:
                         issue = is_letter
