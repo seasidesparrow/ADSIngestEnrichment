@@ -542,4 +542,7 @@ REFSOURCE_DICT = {
     "egu": "egu.xml",
     "nlm": "nlm.xml",
     "copernicus": "copernicus.xml",
+    "wiley": "wiley.xml",
+    "mdpi": "mdpi.xml",
+    "edp": "edp.xml",
 }

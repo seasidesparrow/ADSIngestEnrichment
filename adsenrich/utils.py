@@ -3,6 +3,7 @@ import sys
 
 import requests
 import unidecode
+import time
 
 
 class UnicodeDecodeError(Exception):
@@ -51,12 +52,18 @@ def issn2info(token=None, url=None, issn=None, return_info="bibstem"):
         url_base = url + "/journals/issn/"
         request_url = url_base + issn
         token_dict = {"Authorization": "Bearer %s" % token}
-        try:
-            req = requests.get(request_url, headers=token_dict)
-        except Exception as err:
-            pass
-        else:
-            if req.status_code == 200:
-                result = req.json()
-                return result.get("issn", {}).get(return_info, None)
+        icount = 0
+        maxcount = 10
+        while icount < maxcount:
+            try:
+                req = requests.get(request_url, headers=token_dict)
+            except Exception as err:
+                icount += 1
+            else:
+                if req.status_code == 200:
+                    result = req.json()
+                    return result.get("issn", {}).get(return_info, None)
+                else:
+                    time.sleep(10)
+                    icount += 1
     return
