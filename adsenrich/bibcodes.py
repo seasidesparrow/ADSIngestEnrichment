@@ -177,6 +177,7 @@ class BibcodeGenerator(object):
                         issn = str(issn)
                         if len(issn) == 8:
                             issn = issn[0:4] + "-" + issn[4:]
+                        bibstem = ISSN_DICT.get(issn, None)
                         if not bibstem:
                             bibstem = issn2info(
                                 token=self.api_token,
