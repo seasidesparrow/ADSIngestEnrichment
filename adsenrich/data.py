@@ -2,7 +2,7 @@ import os
 
 issnfile = "/proj/ads/abstracts/config/journalsdb/PIPELINE/data/issn_identifiers"
 ISSN_DICT = {}
-if os.path.exists(infile):
+if os.path.exists(issnfile):
     with open(issnfile, "r") as fi:
         for l in fi.readlines():
             try:
