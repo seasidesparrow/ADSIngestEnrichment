@@ -545,4 +545,6 @@ REFSOURCE_DICT = {
     "wiley": "wiley.xml",
     "mdpi": "mdpi.xml",
     "edp": "edp.xml",
+    "elsevier": "elsevier.xml",
+    "spie": "spie.xml",
 }
