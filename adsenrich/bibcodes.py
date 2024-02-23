@@ -41,22 +41,29 @@ class BibcodeGenerator(object):
 
     def _get_author_init(self, record):
         author_init = "."
-        special_char = {'&ETH;': 'E',
-                        '&eth;': 'e',
+        special_char = {'&ETH;': 'ETH',
+                        '&eth;': 'eth',
                         '&THORN;': 'TH',
                         '&thorn;': 'th'}
-        try:
-            author_init = record.get("authors", [])[0]["name"]["surname"]
-            first_auth = record.get("authors", [])[0]
-            if first_auth:
-                author_last = first_auth.get("name", {}).get("surname", None)
-                author_last = author_last.strip()
-                author_last = u2asc(author_last)
-                for k, v in special_char.items():
-                    author_last = author_last.replace(k, v)
-                author_init = author_last[0].upper()
-        except:
-            pass
+        author_list = record.get("authors", [])
+        if author_list:
+            first_author = record.get("authors", [])[0]
+            if first_author:
+                author_name = first_author.get("name", None)
+                if author_name:
+                    namestring = None
+                    if author_name.get("collab", None):
+                        namestring = author_name.get("collab")
+                    elif author_name.get("surname", None):
+                        namestring = author_name.get("surname")
+                    if namestring:
+                        try:
+                            namestring = u2asc(namestring.strip())
+                            for k, v in special_char.items():
+                                namestring = namestring.replace(k, v)
+                            author_init = namestring[0].upper()
+                        except:
+                            pass
         return author_init
 
     def _get_pubyear(self, record):
