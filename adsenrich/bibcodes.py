@@ -23,7 +23,7 @@ class NoBibcodeException(Exception):
 
 
 class BibcodeGenerator(object):
-    def __init__(self, bibstem=None, token=None, url=None):
+    def __init__(self, bibstem=None, volume=None, token=None, url=None):
         if not token:
             token = conf.get("_API_TOKEN", None)
         if not url:
@@ -32,6 +32,7 @@ class BibcodeGenerator(object):
         self.api_token = token
         self.api_url = url
         self.bibstem = bibstem
+        self.volume = volume
 
     def _int_to_letter(self, integer):
         try:
@@ -75,14 +76,17 @@ class BibcodeGenerator(object):
             return pub_year
 
     def _get_volume(self, record):
-        try:
-            volume = record.get("publication", {}).get("volumeNum", None)
-            if "-" in volume:
-                vol_list = volume.strip().split("-")
-                volume = vol_list[0]
-        except Exception as err:
-            volume = "."
-        return volume
+        if self.volume:
+            return self.volume
+        else:
+            try:
+                volume = record.get("publication", {}).get("volumeNum", None)
+                if "-" in volume:
+                    vol_list = volume.strip().split("-")
+                    volume = vol_list[0]
+            except Exception as err:
+                volume = "."
+            return volume
 
     def _get_issue(self, record):
         try:
@@ -199,7 +203,7 @@ class BibcodeGenerator(object):
         else:
             raise BibstemException("Bibstem not found.")
 
-    def make_bibcode(self, record, bibstem=None):
+    def make_bibcode(self, record, bibstem=None, volume=None):
         try:
             year = self._get_pubyear(record)
         except Exception as err:
@@ -210,7 +214,8 @@ class BibcodeGenerator(object):
         except Exception as err:
             bibstem = None
         try:
-            volume = self._get_volume(record)
+            if not volume:
+                volume = self._get_volume(record)
         except Exception as err:
             volume = ""
         try:
