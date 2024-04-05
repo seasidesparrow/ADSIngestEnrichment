@@ -10,8 +10,6 @@ from adsenrich.utils import issn2info, u2asc
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
 
-WILEY_BIBSTEMS = ["JGRA", "JGRB", "JGRC", "JGRD", "JGRE", "JGRF", "JGRG", "JGRX"]
-
 
 class BibstemException(Exception):
     pass

@@ -532,6 +532,33 @@ SPRINGER_BIBSTEMS = [
     "KARJ.",
 ]
 
+WILEY_BIBSTEMS = [
+    "AN...",
+    "AGUA.",
+    "E&SS.",
+    "EaFut",
+    "EOSTr",
+    "GBioC",
+    "GeoRL",
+    "GGG..",
+    "GHeal",
+    "JAMES",
+    "JGR..",
+    "JGRA.",
+    "JGRB.",
+    "JGRC.",
+    "JGRD.",
+    "JGRE.",
+    "JGRF.",
+    "JGRG.",
+    "M&PS.",
+    "RaSc.",
+    "RvGeo",
+    "SpWea",
+    "Tecto",
+    "WRR..",
+]
+
 REFSOURCE_DICT = {
     "aip": "aipft.xml",
     "iop": "iopft.xml",
