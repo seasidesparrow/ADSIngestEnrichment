@@ -5,7 +5,7 @@ import string
 from adsputils import load_config
 
 from adsenrich.data import *
-from adsenrich.utils import issn2info, u2asc
+from adsenrich.utils import issn2info, name2bib, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
@@ -194,11 +194,19 @@ class BibcodeGenerator(object):
                             break
                 if not bibstem:
                     bibstem = issn2info(
-                    token=self.api_token,
-                    url=self.api_url,
-                    issn=issn,
-                    return_info="bibstem",
-                )
+                        token=self.api_token,
+                        url=self.api_url,
+                        issn=issn,
+                        return_info="bibstem",
+                    )
+                if not bibstem:
+                    journal_name = record.get("publication", {}).get("pubName", None)
+                    if journal_name:
+                        bibstem = name2bib(
+                            token=self.api_token,
+                            url=self.api_url,
+                            name=journal_name,
+                        )
         if bibstem:
             return bibstem
         else:
@@ -288,7 +296,7 @@ class BibcodeGenerator(object):
             elif bibstem in SPRINGER_BIBSTEMS:
                 # Springer get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_normal_pagenum(record)
-                if bibstem == "JHEP.":
+                if bibstem == "JHEP." or bibstem == "JCAP.":
                     try:
                         issue = self._get_issue(record)
                         volume = issue.rjust(4, ".")

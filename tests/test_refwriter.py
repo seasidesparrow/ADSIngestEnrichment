@@ -9,8 +9,9 @@ from adsenrich.references import ReferenceWriter
 
 class TestRefwriter(unittest.TestCase):
     def setUp(self):
-        self.inputdir = os.path.join(os.path.dirname(__file__), "data/input/")
-        self.outputdir = os.path.join(os.path.dirname(__file__), "data/output/")
+        self.inputdir = os.path.join(os.path.dirname(__file__), "stubdata/input/")
+        self.tempdir = os.path.join(os.path.dirname(__file__), "stubdata/test_tmp/")
+        self.outputdir = os.path.join(os.path.dirname(__file__), "stubdata/output/")
 
     def test_refwriter(self):
         filenames_dict = {
@@ -47,7 +48,7 @@ class TestRefwriter(unittest.TestCase):
                 with patch("adsenrich.bibcodes.BibcodeGenerator.make_bibcode", mock_bibcode):
                     refs = ReferenceWriter(
                         data=record,
-                        reference_directory=self.outputdir,
+                        reference_directory=self.tempdir,
                         reference_source=filenames_dict[f]["refsource"],
                         url="http://devapi.adsabs.harvard.edu/v1/",
                     )
