@@ -357,6 +357,10 @@ class BibcodeGenerator(object):
                     if not issue:
                         issue = is_letter
 
+            # for stem.conf, stem.work, stem.data, stem.book etc...
+            if len(bibstem) == 9:
+                volume = ""
+
             if not issue:
                 pageid = pageid.rjust(5, ".")
                 issue = ""
