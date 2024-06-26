@@ -1,10 +1,11 @@
 import os
+import re
 import string
 
 from adsputils import load_config
 
 from adsenrich.data import *
-from adsenrich.utils import issn2info, u2asc
+from adsenrich.utils import issn2info, name2bib, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
@@ -193,11 +194,19 @@ class BibcodeGenerator(object):
                             break
                 if not bibstem:
                     bibstem = issn2info(
-                    token=self.api_token,
-                    url=self.api_url,
-                    issn=issn,
-                    return_info="bibstem",
-                )
+                        token=self.api_token,
+                        url=self.api_url,
+                        issn=issn,
+                        return_info="bibstem",
+                    )
+                if not bibstem:
+                    journal_name = record.get("publication", {}).get("pubName", None)
+                    if journal_name:
+                        bibstem = name2bib(
+                            token=self.api_token,
+                            url=self.api_url,
+                            name=journal_name,
+                        )
         if bibstem:
             return bibstem
         else:
@@ -285,9 +294,9 @@ class BibcodeGenerator(object):
                     issue = self._int_to_letter(self._get_issue(record))
 
             elif bibstem in SPRINGER_BIBSTEMS:
-                # IOP get converted_pagenum/letters for six+ digit pages
+                # Springer get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_normal_pagenum(record)
-                if bibstem == "JHEP.":
+                if bibstem == "JHEP." or bibstem == "JCAP.":
                     try:
                         issue = self._get_issue(record)
                         volume = issue.rjust(4, ".")
@@ -298,25 +307,29 @@ class BibcodeGenerator(object):
                     if not issue:
                         issue = is_letter
 
-            elif bibstem in ["zndo."]:
-                try:
-                    zenodo_pid = record.get("persistentIDs", {})
-                    zenodo_doi = None
-                    for d in zenodo_pid:
-                        if d.get("DOI", None):
-                            zenodo_doi = d.get("DOI")
-                    if zenodo_doi:
-                        zenodo_id = zenodo_doi.split("/")[-1].replace("zenodo.", "")
-                        pageid = zenodo_id[-4:].rjust(4, ".")
-                        zenodo_id = zenodo_id[0:-4]
-                        if zenodo_id:
-                            issue = zenodo_id[-1]
-                            zenodo_id = zenodo_id[0:-1]
-                        else:
-                            issue = "."
-                        volume = zenodo_id.rjust(4, ".")
-                except:
-                    pass
+            elif bibstem in WILEY_BIBSTEMS:
+                strip_list = ["GB", "PA", "RG", "RS", "TC"]
+                page = self._get_pagenum(record)
+                newpage = page
+                is_letter = ""
+                for substr in strip_list:
+                    newpage = re.sub(substr, ".", newpage)
+                newpage = re.sub(r"^[ABCDEFGLMQSW]0?", ".", newpage)
+
+                if newpage[0] == "L":
+                    newpage = newpage[1:]
+                    is_letter = "L"
+                while re.search(r"^0", newpage):
+                    newpage = re.sub(r"^0", "", newpage)
+                if is_letter:
+                    plength = 4
+                else:
+                    plength = 5
+                if len(newpage) > plength:
+                    newpage = newpage[-plength:]
+                elif len(newpage) < plength:
+                    newpage = newpage.rjust(plength, ".")
+                pageid = is_letter + newpage
 
             elif bibstem in ["zndo."]:
                 try:

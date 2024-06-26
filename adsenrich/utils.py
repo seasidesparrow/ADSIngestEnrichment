@@ -67,3 +67,35 @@ def issn2info(token=None, url=None, issn=None, return_info="bibstem"):
                     time.sleep(10)
                     icount += 1
     return
+
+def name2bib(token=None, url=None, name=None):
+    """
+    Sends a journal name to the JournalsDB API and returns the resulting
+    list.  It then checks for an exact match, and if found, returns the 
+    bibstem.
+    """
+    if name and token and url:
+        url_base = url + "/journals/journal/"
+        request_url = url_base + name
+        token_dict = {"Authorization": "Bearer %s" % token}
+        icount = 0
+        maxcount = 10
+        while icount < maxcount:
+            try:
+                req = requests.get(request_url, headers=token_dict)
+            except Exception as err:
+                icount += 1
+            else:
+                if req.status_code == 200:
+                    result = req.json()
+                    jlist = result.get("journal", {}).get(return_info, None)
+                    if jlist:
+                        for j in jlist:
+                            if name == j.get("name", None):
+                                bibstem = j.get("bibstem", None)
+                                return bibstem
+                else:
+                    time.sleep(10)
+                    icount += 1
+    return
+    
