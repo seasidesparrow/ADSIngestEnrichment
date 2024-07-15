@@ -115,7 +115,7 @@ class BibcodeGenerator(object):
                 page = "."
             page = page.replace(",", "")
             if REGEX_PAGE_ROMAN_NUMERAL.search(page):
-                page = roman.fromRoman(page)
+                page = roman.fromRoman(page.upper())
             return page
         else:
             return "."
