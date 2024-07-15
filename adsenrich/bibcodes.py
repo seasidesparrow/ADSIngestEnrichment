@@ -1,5 +1,6 @@
 import os
 import re
+import roman
 import string
 
 from adsputils import load_config
@@ -9,6 +10,8 @@ from adsenrich.utils import issn2info, name2bib, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
+
+REGEX_PAGE_ROMAN_NUMERAL = re.compile(r'^[IVXLCDMivxlcdm\.\+\s,-]+$')
 
 
 class BibstemException(Exception):
@@ -111,6 +114,8 @@ class BibcodeGenerator(object):
             else:
                 page = "."
             page = page.replace(",", "")
+            if REGEX_PAGE_ROMAN_NUMERAL.search(page):
+                page = roman.fromRoman(page)
             return page
         else:
             return "."
