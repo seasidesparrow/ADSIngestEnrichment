@@ -192,13 +192,15 @@ class BibcodeGenerator(object):
                         bibstem = ISSN_DICT.get(issn, None)
                         if bibstem:
                             break
-                if not bibstem:
-                    bibstem = issn2info(
-                        token=self.api_token,
-                        url=self.api_url,
-                        issn=issn,
-                        return_info="bibstem",
-                    )
+                        if not bibstem:
+                            bibstem = issn2info(
+                                token=self.api_token,
+                                url=self.api_url,
+                                issn=issn,
+                                return_info="bibstem",
+                            )
+                        if bibstem:
+                            break
                 if not bibstem:
                     journal_name = record.get("publication", {}).get("pubName", None)
                     if journal_name:
