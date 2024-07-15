@@ -182,7 +182,7 @@ class BibcodeGenerator(object):
                     bibstem = "zndo."
             if not bibstem:
                 issn_rec = []
-                issn_rec = record.get("publication", {}).get("ISSN", None)
+                issn_rec = record.get("publication", {}).get("ISSN", [])
                 for i in issn_rec:
                     issn = i.get("issnString", None)
                     if issn:
@@ -191,14 +191,16 @@ class BibcodeGenerator(object):
                             issn = issn[0:4] + "-" + issn[4:]
                         bibstem = ISSN_DICT.get(issn, None)
                         if bibstem:
-                            break
-                if not bibstem:
-                    bibstem = issn2info(
-                        token=self.api_token,
-                        url=self.api_url,
-                        issn=issn,
-                        return_info="bibstem",
-                    )
+                            return bibstem
+                        if not bibstem:
+                            bibstem = issn2info(
+                                token=self.api_token,
+                                url=self.api_url,
+                                issn=issn,
+                                return_info="bibstem",
+                            )
+                        if bibstem:
+                            return bibstem
                 if not bibstem:
                     journal_name = record.get("publication", {}).get("pubName", None)
                     if journal_name:

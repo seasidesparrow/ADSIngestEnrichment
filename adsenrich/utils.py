@@ -88,7 +88,7 @@ def name2bib(token=None, url=None, name=None):
             else:
                 if req.status_code == 200:
                     result = req.json()
-                    jlist = result.get("journal", {}).get(return_info, None)
+                    jlist = result.get("journal", [])
                     if jlist:
                         for j in jlist:
                             if name == j.get("name", None):
