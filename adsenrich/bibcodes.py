@@ -182,7 +182,7 @@ class BibcodeGenerator(object):
                     bibstem = "zndo."
             if not bibstem:
                 issn_rec = []
-                issn_rec = record.get("publication", {}).get("ISSN", None)
+                issn_rec = record.get("publication", {}).get("ISSN", [])
                 for i in issn_rec:
                     issn = i.get("issnString", None)
                     if issn:
