@@ -75,9 +75,9 @@ class BibcodeGenerator(object):
                         namestring = author_name.get("surname")
                     if namestring:
                         try:
+                            namestring = u2asc(namestring.strip())
                             for k, v in special_char.items():
                                 namestring = namestring.replace(k, v)
-                            namestring = u2asc(namestring.strip())
                             author_init = namestring[0].upper()
                         except:
                             pass
