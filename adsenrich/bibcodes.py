@@ -50,14 +50,18 @@ class BibcodeGenerator(object):
         special_char = {"&ETH;": "ETH",
                         "&eth;": "eth",
                         "&THORN;": "TH",
-                        "&thorn;": "th",
-                        "'": ""}
+                        "&thorn;": "th"}
         special_char_unicode = {}
         for k, v in special_char.items():
             knew = html.unescape(k)
             if k != knew:
                 special_char_unicode[knew] = v
         special_char.update(special_char_unicode)
+        strip_char = {"'": "",
+                      '"': "",
+                      "(": "",
+                      ")": ""}
+        special_char.update(strip_char)
         author_list = record.get("authors", [])
         if author_list:
             first_author = record.get("authors", [])[0]
