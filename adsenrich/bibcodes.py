@@ -1,3 +1,4 @@
+import html
 import os
 import re
 import roman
@@ -46,10 +47,17 @@ class BibcodeGenerator(object):
 
     def _get_author_init(self, record):
         author_init = "."
-        special_char = {'&ETH;': 'ETH',
-                        '&eth;': 'eth',
-                        '&THORN;': 'TH',
-                        '&thorn;': 'th'}
+        special_char = {"&ETH;": "ETH",
+                        "&eth;": "eth",
+                        "&THORN;": "TH",
+                        "&thorn;": "th",
+                        "'": ""}
+        special_char_unicode = {}
+        for k, v in special_char.items():
+            knew = html.unescape(k)
+            if k != knew:
+                special_char_unicode[knew] = v
+        special_char.update(special_char_unicode)
         author_list = record.get("authors", [])
         if author_list:
             first_author = record.get("authors", [])[0]
@@ -63,9 +71,9 @@ class BibcodeGenerator(object):
                         namestring = author_name.get("surname")
                     if namestring:
                         try:
-                            namestring = u2asc(namestring.strip())
                             for k, v in special_char.items():
                                 namestring = namestring.replace(k, v)
+                            namestring = u2asc(namestring.strip())
                             author_init = namestring[0].upper()
                         except:
                             pass
