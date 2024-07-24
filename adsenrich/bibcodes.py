@@ -113,6 +113,7 @@ class BibcodeGenerator(object):
 
     def _get_pagenum(self, record):
         pagination = record.get("pagination", None)
+        is_letter = None
         if pagination:
             fpage = pagination.get("firstPage", None)
             epage = pagination.get("electronicID", None)
@@ -128,9 +129,10 @@ class BibcodeGenerator(object):
             page = page.replace(",", "")
             if REGEX_PAGE_ROMAN_NUMERAL.search(page):
                 page = str(roman.fromRoman(page.upper()))
-            return page
+                is_letter = "D"
+            return (page, is_letter)
         else:
-            return "."
+            return (".", None)
 
     def _deletter_page(self, page):
         is_letter = None
@@ -158,10 +160,10 @@ class BibcodeGenerator(object):
         return (page, is_letter)
 
     def _get_normal_pagenum(self, record):
-        page = self._get_pagenum(record)
-        is_letter = None
+        (page, is_letter) = self._get_pagenum(record)
         if page:
-            (page, is_letter) = self._deletter_page(page)
+            if is_letter != "D":
+                (page, is_letter) = self._deletter_page(page)
             if len(str(page)) >= 5:
                 page = str(page)[-5:]
             else:
@@ -172,8 +174,9 @@ class BibcodeGenerator(object):
 
     def _get_converted_pagenum(self, record):
         try:
-            page = self._get_pagenum(record)
-            (page, is_letter) = self._deletter_page(page)
+            (page, is_letter) = self._get_pagenum(record)
+            if is_letter =! "D":
+                (page, is_letter) = self._deletter_page(page)
             if page:
                 page_a = None
                 if len(str(page)) >= 6:
@@ -328,9 +331,10 @@ class BibcodeGenerator(object):
 
             elif bibstem in WILEY_BIBSTEMS:
                 strip_list = ["GB", "PA", "RG", "RS", "TC"]
-                page = self._get_pagenum(record)
+                (page, is_letter) = self._get_pagenum(record)
                 newpage = page
-                is_letter = ""
+                if not is_letter:
+                    is_letter = ""
                 for substr in strip_list:
                     newpage = re.sub(substr, ".", newpage)
                 newpage = re.sub(r"^[ABCDEFGLMQSW]0?", ".", newpage)
