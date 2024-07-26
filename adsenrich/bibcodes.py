@@ -28,16 +28,22 @@ class NoBibcodeException(Exception):
 
 
 class BibcodeGenerator(object):
-    def __init__(self, bibstem=None, volume=None, token=None, url=None):
+    def __init__(self, bibstem=None, volume=None, token=None, url=None, maxtries=None, sleeptime=None):
         if not token:
             token = conf.get("_API_TOKEN", None)
         if not url:
             url = conf.get("_API_URL", None)
+        if not maxtries:
+            maxtries = conf.get("_API_MAX_RETRIES", 1)
+        if not sleeptime:
+            sleeptime = conf.get("_API_RETRY_SLEEP", 1)
 
         self.api_token = token
         self.api_url = url
         self.bibstem = bibstem
         self.volume = volume
+        self.maxtries = maxtries
+        self.sleeptime = sleeptime
 
     def _int_to_letter(self, integer):
         try:
@@ -217,6 +223,8 @@ class BibcodeGenerator(object):
                                 token=self.api_token,
                                 url=self.api_url,
                                 issn=issn,
+                                maxtries=self.maxtries,
+                                sleeptime=self.sleeptime,
                                 return_info="bibstem",
                             )
                         if bibstem:
@@ -227,6 +235,8 @@ class BibcodeGenerator(object):
                         bibstem = name2bib(
                             token=self.api_token,
                             url=self.api_url,
+                            maxtries=self.maxtries,
+                            sleeptime=self.sleeptime,
                             name=journal_name,
                         )
         if bibstem:
