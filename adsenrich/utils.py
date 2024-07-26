@@ -86,6 +86,7 @@ def name2bib(token=None, url=None, name=None):
             except Exception as err:
                 icount += 1
             else:
+                bibstem = None
                 if req.status_code == 200:
                     result = req.json()
                     jlist = result.get("journal", [])
@@ -93,9 +94,9 @@ def name2bib(token=None, url=None, name=None):
                         for j in jlist:
                             if name == j.get("name", None):
                                 bibstem = j.get("bibstem", None)
-                                return bibstem
-                else:
+                    return bibstem
+                elif req.status_code >= 500:
                     time.sleep(10)
                     icount += 1
-    return
-    
+                else:
+                    return
