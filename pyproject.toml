@@ -21,6 +21,7 @@ packages = [
 dependencies = [
     'unidecode==0.4.21',
     'adsputils @ git+https://github.com/adsabs/ADSPipelineUtils.git@v1.5.2',
+    'roman==4.2',
 ]
 
 

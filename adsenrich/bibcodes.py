@@ -1,5 +1,7 @@
+import html
 import os
 import re
+import roman
 import string
 
 from adsputils import load_config
@@ -9,6 +11,8 @@ from adsenrich.utils import issn2info, name2bib, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
+
+REGEX_PAGE_ROMAN_NUMERAL = re.compile(r'^[IVXLCDMivxlcdm\.\+\s,-]+$')
 
 
 class BibstemException(Exception):
@@ -24,16 +28,22 @@ class NoBibcodeException(Exception):
 
 
 class BibcodeGenerator(object):
-    def __init__(self, bibstem=None, volume=None, token=None, url=None):
+    def __init__(self, bibstem=None, volume=None, token=None, url=None, maxtries=None, sleeptime=None):
         if not token:
             token = conf.get("_API_TOKEN", None)
         if not url:
             url = conf.get("_API_URL", None)
+        if not maxtries:
+            maxtries = conf.get("_API_MAX_RETRIES", 1)
+        if not sleeptime:
+            sleeptime = conf.get("_API_RETRY_SLEEP", 1)
 
         self.api_token = token
         self.api_url = url
         self.bibstem = bibstem
         self.volume = volume
+        self.maxtries = maxtries
+        self.sleeptime = sleeptime
 
     def _int_to_letter(self, integer):
         try:
@@ -43,10 +53,21 @@ class BibcodeGenerator(object):
 
     def _get_author_init(self, record):
         author_init = "."
-        special_char = {'&ETH;': 'ETH',
-                        '&eth;': 'eth',
-                        '&THORN;': 'TH',
-                        '&thorn;': 'th'}
+        special_char = {"&ETH;": "ETH",
+                        "&eth;": "eth",
+                        "&THORN;": "TH",
+                        "&thorn;": "th"}
+        special_char_unicode = {}
+        for k, v in special_char.items():
+            knew = html.unescape(k)
+            if k != knew:
+                special_char_unicode[knew] = v
+        special_char.update(special_char_unicode)
+        strip_char = {"'": "",
+                      '"': "",
+                      "(": "",
+                      ")": ""}
+        special_char.update(strip_char)
         author_list = record.get("authors", [])
         if author_list:
             first_author = record.get("authors", [])[0]
@@ -98,6 +119,7 @@ class BibcodeGenerator(object):
 
     def _get_pagenum(self, record):
         pagination = record.get("pagination", None)
+        is_letter = None
         if pagination:
             fpage = pagination.get("firstPage", None)
             epage = pagination.get("electronicID", None)
@@ -111,9 +133,12 @@ class BibcodeGenerator(object):
             else:
                 page = "."
             page = page.replace(",", "")
-            return page
+            if REGEX_PAGE_ROMAN_NUMERAL.search(page):
+                page = str(roman.fromRoman(page.upper()))
+                is_letter = "D"
+            return (page, is_letter)
         else:
-            return "."
+            return (".", None)
 
     def _deletter_page(self, page):
         is_letter = None
@@ -141,10 +166,10 @@ class BibcodeGenerator(object):
         return (page, is_letter)
 
     def _get_normal_pagenum(self, record):
-        page = self._get_pagenum(record)
-        is_letter = None
+        (page, is_letter) = self._get_pagenum(record)
         if page:
-            (page, is_letter) = self._deletter_page(page)
+            if is_letter != "D":
+                (page, is_letter) = self._deletter_page(page)
             if len(str(page)) >= 5:
                 page = str(page)[-5:]
             else:
@@ -155,8 +180,9 @@ class BibcodeGenerator(object):
 
     def _get_converted_pagenum(self, record):
         try:
-            page = self._get_pagenum(record)
-            (page, is_letter) = self._deletter_page(page)
+            (page, is_letter) = self._get_pagenum(record)
+            if is_letter != "D":
+                (page, is_letter) = self._deletter_page(page)
             if page:
                 page_a = None
                 if len(str(page)) >= 6:
@@ -197,6 +223,8 @@ class BibcodeGenerator(object):
                                 token=self.api_token,
                                 url=self.api_url,
                                 issn=issn,
+                                maxtries=self.maxtries,
+                                sleeptime=self.sleeptime,
                                 return_info="bibstem",
                             )
                         if bibstem:
@@ -207,6 +235,8 @@ class BibcodeGenerator(object):
                         bibstem = name2bib(
                             token=self.api_token,
                             url=self.api_url,
+                            maxtries=self.maxtries,
+                            sleeptime=self.sleeptime,
                             name=journal_name,
                         )
         if bibstem:
@@ -311,9 +341,10 @@ class BibcodeGenerator(object):
 
             elif bibstem in WILEY_BIBSTEMS:
                 strip_list = ["GB", "PA", "RG", "RS", "TC"]
-                page = self._get_pagenum(record)
+                (page, is_letter) = self._get_pagenum(record)
                 newpage = page
-                is_letter = ""
+                if not is_letter:
+                    is_letter = ""
                 for substr in strip_list:
                     newpage = re.sub(substr, ".", newpage)
                 newpage = re.sub(r"^[ABCDEFGLMQSW]0?", ".", newpage)

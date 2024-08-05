@@ -20,6 +20,8 @@ class ReferenceWriter(object):
         bibcode=None,
         token=None,
         url=None,
+        maxtries=None,
+        sleeptime=None,
     ):
         self.basedir = reference_directory
         self.bibcode = bibcode
@@ -32,9 +34,15 @@ class ReferenceWriter(object):
             token = conf.get("_API_TOKEN", None)
         if not url:
             url = conf.get("_API_URL", None)
+        if not maxtries:
+            maxtries = conf.get("_API_MAX_RETRIES", None)
+        if not sleeptime:
+            sleeptime = conf.get("_API_RETRY_SLEEP", None)
 
         self.api_token = token
         self.api_url = url
+        self.maxtries = maxtries
+        self.sleeptime = sleeptime
 
     def _extract_refs_from_record(self):
         try:
@@ -89,6 +97,8 @@ class ReferenceWriter(object):
                             token=self.api_token,
                             url=self.api_url,
                             issn=issn,
+                            maxtries=self.maxtries,
+                            sleeptime=self.sleeptime,
                             return_info="publisher",
                         )
                     else:
