@@ -328,13 +328,20 @@ class BibcodeGenerator(object):
             elif bibstem in SPRINGER_BIBSTEMS:
                 # Springer get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_normal_pagenum(record)
-                if bibstem == "JHEP." or bibstem == "JCAP.":
+                if bibstem == "JHEP.":
                     try:
                         issue = self._get_issue(record)
-                        volume = issue.rjust(4, ".")
+                        volume = issue.rjust(2, "0")
+                        volume = volume.rjust(4, ".")
+                        pageid = pageid.lstrip(".")
+                        if len(str(pageid)) < 3:
+                            pageid = pageid.rjust(3, "0")
+                        if len(str(pageid)) < 4:
+                            pageid = pageid.rjust(4, ".")
                         issue = None
                     except:
                         issue = None
+
                 if is_letter:
                     if not issue:
                         issue = is_letter
