@@ -570,6 +570,7 @@ REFSOURCE_DICT = {
     "nlm": "nlm.xml",
     "copernicus": "copernicus.xml",
     "wiley": "wiley.xml",
+    "wiley2": "wiley2.xml",
     "mdpi": "mdpi.xml",
     "edp": "edp.xml",
     "elsevier": "elsevier.xml",
