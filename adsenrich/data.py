@@ -31,9 +31,9 @@ APS_BIBSTEMS = [
     "PhRvI",
     "PhyOJ",
     "PhRvR",
-    "PRXE",
-    "PRXL",
-    "PRXQ",
+    "PRXE.",
+    "PRXL.",
+    "PRXQ.",
 ]
 
 IOP_BIBSTEMS = [
