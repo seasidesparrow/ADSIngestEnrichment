@@ -31,6 +31,9 @@ APS_BIBSTEMS = [
     "PhRvI",
     "PhyOJ",
     "PhRvR",
+    "PRXE.",
+    "PRXL.",
+    "PRXQ.",
 ]
 
 IOP_BIBSTEMS = [
@@ -569,7 +572,8 @@ REFSOURCE_DICT = {
     "egu": "egu.xml",
     "nlm": "nlm.xml",
     "copernicus": "copernicus.xml",
-    "wiley": "wiley.xml",
+    "wiley": "wiley2.xml",
+    "wiley2": "wiley2.xml",
     "mdpi": "mdpi.xml",
     "edp": "edp.xml",
     "elsevier": "elsevier.xml",

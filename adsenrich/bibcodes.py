@@ -197,6 +197,27 @@ class BibcodeGenerator(object):
             is_letter = None
         return page, is_letter
 
+    def _deletter_aps(self, record):
+        try:
+            pagination = record.get("pagination", None)
+            is_letter = None
+            if pagination:
+                fpage = pagination.get("firstPage", None)
+                if fpage:
+                    fpage_new = fpage.lstrip("L")
+                    record["pagination"]["firstPage"] = fpage_new
+                epage = pagination.get("electronicID", None)
+                if epage:
+                    epage_new = epage.lstrip("L")
+                    record["pagination"]["electronicID"] = epage_new
+                rpage = pagination.get("pageRange", None)
+                if rpage:
+                    rpage_new = rpage.lstrip("L")
+                    record["pagination"]["pageRange"] = rpage_new
+        except Exception as err:
+            pass
+        return record 
+
     def _get_bibstem(self, record):
         if self.bibstem:
             return self.bibstem
@@ -302,6 +323,10 @@ class BibcodeGenerator(object):
                 
 
             elif bibstem in APS_BIBSTEMS:
+                # If the pageid has an "L", strip it
+                (pageid, is_letter) = self._get_pagenum(record)
+                if pageid[0] =="L":
+                    self._deletter_aps(record)
                 # APS get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if is_letter:
