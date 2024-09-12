@@ -325,7 +325,7 @@ class BibcodeGenerator(object):
             elif bibstem in APS_BIBSTEMS:
                 # If the pageid has an "L", strip it
                 (pageid, is_letter) = self._get_pagenum(record)
-                if is_letter=="L":
+                if pageid[0] =="L":
                     self._deletter_aps(record)
                 # APS get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
