@@ -366,6 +366,12 @@ class BibcodeGenerator(object):
                         issue = None
                     except:
                         issue = None
+                else:
+                    issue = self._get_issue(record)
+                    if issue:
+                        if "Sup" in issue:
+                            issue = "S"
+                    
 
                 if is_letter:
                     if not issue:
