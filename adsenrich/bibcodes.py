@@ -353,9 +353,10 @@ class BibcodeGenerator(object):
             elif bibstem in SPRINGER_BIBSTEMS:
                 # Springer get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_normal_pagenum(record)
+                issue = self._get_issue(record)
+
                 if bibstem == "JHEP.":
                     try:
-                        issue = self._get_issue(record)
                         volume = issue.rjust(2, "0")
                         volume = volume.rjust(4, ".")
                         pageid = pageid.lstrip(".")
@@ -367,15 +368,13 @@ class BibcodeGenerator(object):
                     except:
                         issue = None
                 else:
-                    issue = self._get_issue(record)
                     if issue:
                         if "Sup" in issue:
-                            issue = "S"
-                    
+                            is_letter = "S"
+                issue = None
 
                 if is_letter:
-                    if not issue:
-                        issue = is_letter
+                    issue = is_letter
 
             elif bibstem in WILEY_BIBSTEMS:
                 strip_list = ["GB", "PA", "RG", "RS", "TC"]
@@ -441,7 +440,7 @@ class BibcodeGenerator(object):
             try:
                 bibcode = year + bibstem + volume + issue + pageid + author_init
                 if len(bibcode) != 19:
-                    raise Exception("Malformed bibcode, wrong length!")
+                    raise Exception("Malformed bibcode, wrong length! %s" % bibcode)
             except Exception as err:
                 bibcode = None
             return bibcode
