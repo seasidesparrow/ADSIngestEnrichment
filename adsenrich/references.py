@@ -90,9 +90,9 @@ class ReferenceWriter(object):
                 issn_rec = self.data["publication"]["ISSN"]
                 for i in issn_rec:
                     issn = i.get("issnString", None)
-                    if len(issn) == 8:
-                        issn = issn[0:4] + "-" + issn[4:]
                     if issn:
+                        if len(issn) == 8:
+                            issn = issn[0:4] + "-" + issn[4:]
                         publisher = issn2info(
                             token=self.api_token,
                             url=self.api_url,
