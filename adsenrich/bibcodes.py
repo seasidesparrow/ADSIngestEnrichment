@@ -230,6 +230,13 @@ class BibcodeGenerator(object):
             if not bibstem:
                 issn_rec = []
                 issn_rec = record.get("publication", {}).get("ISSN", [])
+                book_series = record.get("publication", {}).get("bookSeries", {})
+                if book_series:
+                    if book_series.get("seriesDescription","").upper() == "ISSN":
+                        issn_series = book_series.get("seriesID", None)
+                        if issn_series:
+                            issn_series_dict = {"issnString": issn_series}
+                            issn_rec.append(issn_series_dict)
                 for i in issn_rec:
                     issn = i.get("issnString", None)
                     if issn:
