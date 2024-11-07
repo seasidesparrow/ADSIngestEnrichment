@@ -106,6 +106,8 @@ class BibcodeGenerator(object):
                 if "-" in volume:
                     vol_list = volume.strip().split("-")
                     volume = vol_list[0]
+                if REGEX_PAGE_ROMAN_NUMERAL.search(volume):
+                    volume = str(roman.fromRoman(volume.upper()))
             except Exception as err:
                 volume = "."
             return volume
