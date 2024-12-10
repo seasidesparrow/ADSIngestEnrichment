@@ -114,9 +114,9 @@ class BibcodeGenerator(object):
 
     def _get_issue(self, record):
         try:
-            issue = str(record.get("publication", {}).get("issueNum", None))
+            issue = str(record.get("publication", {}).get("issueNum", ""))
         except Exception as err:
-            issue = None
+            issue = ""
         return issue
 
     def _get_pagenum(self, record):
@@ -435,6 +435,8 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue = is_letter
+                if not volume:
+                    volume = self._get_issue(record)
 
             # for stem.conf, stem.work, stem.data, stem.book etc...
             if len(bibstem) == 9:
