@@ -1298,6 +1298,16 @@ WILEY_BIBSTEMS = [
     "Wthr.",
 ]
 
+SPJ_BIBSTEMS = [
+    "AdDI.",
+    "EcoHS",
+    "EnMAd",
+    "JRemS",
+    "Resea",
+    "SpScT",
+    "UltSc",
+]
+
 REFSOURCE_DICT = {
     "aip": "aipft.xml",
     "iop": "iopft.xml",

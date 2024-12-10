@@ -430,6 +430,16 @@ class BibcodeGenerator(object):
                 except:
                     pass
 
+            elif bibstem in SPJ_BIBSTEMS:
+                try:
+                    (pageid, is_letter) = self._get_pagenum(record)
+                    volume = volume.rjust(4, ".")
+                    pageid = pageid.lstrip(".")
+                    if len(str(pageid)) < 4:
+                        pageid = pageid.rjust(4, ".")
+                    issue = None
+                except:
+                    pass
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
