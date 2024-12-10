@@ -356,7 +356,7 @@ class BibcodeGenerator(object):
                     if is_letter:
                         if not issue:
                             issue = is_letter
-                else:
+                elif bibstem != "AmJPh":
                     issue = self._int_to_letter(self._get_issue(record))
 
             elif bibstem in SPRINGER_BIBSTEMS:
