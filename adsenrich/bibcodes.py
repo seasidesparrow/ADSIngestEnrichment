@@ -434,7 +434,7 @@ class BibcodeGenerator(object):
                 try:
                     (pageid, is_letter) = self._get_pagenum(record)
                     volume = volume.rjust(4, ".")
-                    pageid = pageid.lstrip(".")
+                    pageid = pageid.lstrip(".").lstrip("0")
                     if len(str(pageid)) < 4:
                         pageid = pageid.rjust(4, ".")
                     issue = None
