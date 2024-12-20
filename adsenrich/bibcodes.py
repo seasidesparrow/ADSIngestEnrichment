@@ -114,9 +114,9 @@ class BibcodeGenerator(object):
 
     def _get_issue(self, record):
         try:
-            issue = str(record.get("publication", {}).get("issueNum", None))
+            issue = str(record.get("publication", {}).get("issueNum", ""))
         except Exception as err:
-            issue = None
+            issue = ""
         return issue
 
     def _get_pagenum(self, record):
@@ -356,7 +356,7 @@ class BibcodeGenerator(object):
                     if is_letter:
                         if not issue:
                             issue = is_letter
-                else:
+                elif bibstem != "AmJPh":
                     issue = self._int_to_letter(self._get_issue(record))
 
             elif bibstem in SPRINGER_BIBSTEMS:
@@ -430,11 +430,23 @@ class BibcodeGenerator(object):
                 except:
                     pass
 
+            elif bibstem in SPJ_BIBSTEMS:
+                try:
+                    (pageid, is_letter) = self._get_pagenum(record)
+                    volume = volume.rjust(4, ".")
+                    pageid = pageid.lstrip(".").lstrip("0")
+                    if len(str(pageid)) < 4:
+                        pageid = pageid.rjust(4, ".")
+                    issue = None
+                except:
+                    pass
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
                     if not issue:
                         issue = is_letter
+                if not volume:
+                    volume = self._get_issue(record)
 
             # for stem.conf, stem.work, stem.data, stem.book etc...
             if len(bibstem) == 9:
