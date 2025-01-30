@@ -1316,6 +1316,10 @@ GEOSOC_LONDON_BIBSTEMS = [
     "PYGS.",
     "Geoen",
     "GEEA.",
+    "GSLEG",
+    "GSLSP",
+    "GSLMm",
+    "GSLPG",
 ]
 
 REFSOURCE_DICT = {
