@@ -1309,9 +1309,11 @@ SPJ_BIBSTEMS = [
 ]
 
 GEOSOC_LONDON_BIBSTEMS = [
+    "QJEGH",
     "JGSoc",
     "ScJG.",
     "PetGe",
+    "PYGS.",
     "Geoen",
     "GEEA.",
 ]
