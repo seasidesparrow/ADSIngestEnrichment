@@ -440,6 +440,15 @@ class BibcodeGenerator(object):
                     issue = None
                 except:
                     pass
+
+            elif bibstem in GEOSOC_LONDON_BIBSTEMS:
+                try:
+                    (pageid, is_letter) = self._get_normal_pagenum(record)
+                    pageid = pageid.lstrip(r"\D").lstrip("0")
+                    issue = None
+                except:
+                    pass
+
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
