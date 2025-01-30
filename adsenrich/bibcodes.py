@@ -329,6 +329,23 @@ class BibcodeGenerator(object):
                         issue = is_letter
                 if issue and (len(pageid) > 4):
                     pageid = pageid[-4:]
+
+                #JaJAP is a special case within IOP
+                if bibstem == "JaJAP":
+                    # forget all the stuff above, and...
+                    (pageid, is_letter) = self._get_pagenum(record)
+                    issue = None
+                    is_letter = None
+                    if len(str(pageid)) >= 6:
+                        pageid = pageid[-6:]
+                        page_a = self._int_to_letter(pageid[0:2])
+                        pageid = page_a+pageid[2:]
+
+                    # JaJAP/JJAPS are IOP journals
+                    issuex = self._get_issue(record)
+                    if "S" in issuex:
+                        bibstem = "JJAPS"
+
                 
 
             elif bibstem in APS_BIBSTEMS:
