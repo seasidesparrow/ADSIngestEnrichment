@@ -1308,6 +1308,20 @@ SPJ_BIBSTEMS = [
     "UltSc",
 ]
 
+GEOSOC_LONDON_BIBSTEMS = [
+    "QJEGH",
+    "JGSoc",
+    "ScJG.",
+    "PetGe",
+    "PYGS.",
+    "Geoen",
+    "GEEA.",
+    "GSLEG",
+    "GSLSP",
+    "GSLMm",
+    "GSLPG",
+]
+
 REFSOURCE_DICT = {
     "aip": "aipft.xml",
     "iop": "iopft.xml",
