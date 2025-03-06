@@ -125,6 +125,7 @@ class ReferenceWriter(object):
             volume = self.data.get("publication", {}).get("volumeNum", "").rjust(4, "0")
             output_dir = self.basedir + bibstem + "/" + volume
             self.output_file = output_dir + "/" + self.bibcode + "." + file_ext
+            self.output_file = self.output_file.replace("&", "+")
 
         except Exception as err:
             pass

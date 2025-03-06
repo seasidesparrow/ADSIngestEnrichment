@@ -126,6 +126,12 @@ class BibcodeGenerator(object):
             fpage = pagination.get("firstPage", None)
             epage = pagination.get("electronicID", None)
             rpage = pagination.get("pageRange", None)
+            if fpage == "NP":
+                fpage = ""
+            if epage == "NP":
+                epage = ""
+            if rpage == "NP-NP":
+                rpage = ""
             if fpage:
                 page = fpage
             elif epage:
