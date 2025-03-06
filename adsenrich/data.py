@@ -11,6 +11,17 @@ if os.path.exists(issnfile):
             except Exception as err:
                 pass
 
+isbnfile = "/proj/ads/abstracts/config/journalsdb/PIPELINE/data/isbn_identifiers"
+ISBN_DICT = {}
+if os.path.exists(isbnfile):
+    with open(isbnfile, "r") as fi:
+        for l in fi.readlines():
+            try:
+                (bibstem, id_type, id_value) = l.rstrip().split("\t")
+                ISBN_DICT[id_value] = bibstem
+            except Exception as err:
+                pass
+
 APS_BIBSTEMS = [
     "PhRvL",
     "PhRvX",
@@ -1338,4 +1349,5 @@ REFSOURCE_DICT = {
     "edp": "edp.xml",
     "elsevier": "elsevier.xml",
     "spie": "spie.xml",
+    "ieee": "ieee.xml",
 }
