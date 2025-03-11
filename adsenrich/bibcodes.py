@@ -310,7 +310,27 @@ class BibcodeGenerator(object):
             issue = None
 
             # Special bibstem, page, volume, issue handling
-            if bibstem in IOP_BIBSTEMS:
+            # start with ArXiv and arxiv-cat bibcodes
+            if bibstem == 'arXiv':
+                pubids = record.get("publisher_IDs")
+                for pid in pubids:
+                    if pid.get("attribute", "") == "urn":
+                        urn = pid.get("Identifier")
+                        recordid = urn.split(":")[2].split("/")
+                        if len(recordid) == 2:
+                            #old-style
+                            cat = recordid[0].replace("-", ".")
+                            ident = recordid[1][2:].lstrip("0")
+                            idsize = 14 - len(cat)
+                            ident = ident.rjust(idsize, ".")
+                            bibcode = year + cat + ident + author_init
+                        else:
+                            ident = recordid[0].split(".")
+                            identfull = ident[0] + ident[1].rjust(5, "0")
+                            bibcode = year + bibstem + identfull + author_init
+                        return bibcode
+                pass
+            elif bibstem in IOP_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if bibstem == "JCAP.":
