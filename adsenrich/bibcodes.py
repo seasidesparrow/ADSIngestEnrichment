@@ -312,7 +312,7 @@ class BibcodeGenerator(object):
             # Special bibstem, page, volume, issue handling
             # start with ArXiv and arxiv-cat bibcodes
             if bibstem == 'arXiv':
-                pubids = record.get("publisher_IDs")
+                pubids = record.get("publisherIDs")
                 for pid in pubids:
                     if pid.get("attribute", "") == "urn":
                         urn = pid.get("Identifier")
@@ -326,7 +326,7 @@ class BibcodeGenerator(object):
                             bibcode = year + cat + ident + author_init
                         else:
                             ident = recordid[0].split(".")
-                            identfull = ident[0] + ident[1].rjust(5, "0")
+                            identfull = ident[0] + ident[1].rjust(5, ".")
                             bibcode = year + bibstem + identfull + author_init
                         return bibcode
                 pass
