@@ -102,10 +102,11 @@ class BibcodeGenerator(object):
             return self.volume
         else:
             try:
-                volume = record.get("publication", {}).get("volumeNum", None)
+                volume = record.get("publication", {}).get("volumeNum", "")
                 if "-" in volume:
                     vol_list = volume.strip().split("-")
-                    volume = vol_list[0]
+                    if vol_list:
+                        volume = vol_list[0]
                 if REGEX_PAGE_ROMAN_NUMERAL.search(volume):
                     volume = str(roman.fromRoman(volume.upper()))
             except Exception as err:
@@ -497,8 +498,8 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue = is_letter
-                if not volume:
-                    volume = self._get_issue(record)
+                if volume == "....":
+                    volume = self._get_issue(record).rjust(4, ".")
 
             # for stem.conf, stem.work, stem.data, stem.book etc...
             if len(bibstem) == 9:
