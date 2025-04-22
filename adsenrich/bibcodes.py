@@ -28,7 +28,7 @@ class NoBibcodeException(Exception):
 
 
 class BibcodeGenerator(object):
-    def __init__(self, bibstem=None, volume=None, token=None, url=None, maxtries=None, sleeptime=None):
+    def __init__(self, bibstem=None, volume=None, idpage=False, token=None, url=None, maxtries=None, sleeptime=None):
         if not token:
             token = conf.get("_API_TOKEN", None)
         if not url:
@@ -42,6 +42,7 @@ class BibcodeGenerator(object):
         self.api_url = url
         self.bibstem = bibstem
         self.volume = volume
+        self.idpage = idpage
         self.maxtries = maxtries
         self.sleeptime = sleeptime
 
@@ -133,14 +134,20 @@ class BibcodeGenerator(object):
                 epage = ""
             if rpage == "NP-NP":
                 rpage = ""
-            if fpage:
-                page = fpage
-            elif epage:
-                page = epage
-            elif rpage:
-                page = rpage
+            if self.idpage:
+                if epage:
+                    page = epage
+                else:
+                    page = "."
             else:
-                page = "."
+                if fpage:
+                    page = fpage
+                elif epage:
+                    page = epage
+                elif rpage:
+                    page = rpage
+                else:
+                    page = "."
             page = page.replace(",", "")
             if REGEX_PAGE_ROMAN_NUMERAL.search(page):
                 page = str(roman.fromRoman(page.upper()))
