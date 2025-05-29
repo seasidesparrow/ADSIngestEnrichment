@@ -1333,6 +1333,23 @@ GEOSOC_LONDON_BIBSTEMS = [
     "GSLPG",
 ]
 
+CSP_BIBSTEMS = [
+    "ArcSc",
+    "Botan",
+    "CaGJ",
+    "CaJB",
+    "CaJCE",
+    "CaJCh",
+    "CaJES",
+    "CaJMb",
+    "CaJPS",
+    "CaJPh",
+    "DSysA",
+    "EnvRv",
+    "Facet",
+    "TCSME",
+]
+
 REFSOURCE_DICT = {
     "aip": "aipft.xml",
     "iop": "iopft.xml",
