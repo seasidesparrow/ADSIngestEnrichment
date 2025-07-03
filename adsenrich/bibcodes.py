@@ -393,7 +393,7 @@ class BibcodeGenerator(object):
                     if not issue:
                         issue = is_letter
 
-            elif bibstem in OUP_BIBSTEMS or bibstem in IEEE_COL14_BIBSTEMS:
+            elif bibstem in OUP_BIBSTEMS:
                 # APS get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
                 if is_letter:
@@ -503,7 +503,8 @@ class BibcodeGenerator(object):
             # for records that need "page:1" replaced with doi tail
             # note this should already be caught by the -D option in
             # ADSManualParser run.py, but if not, here it is:
-            # elif bibstem in IEEE_SPECPAGE or bibstem in CSP_BIBSTEMS:
+            elif bibstem in IEEE_COL14_BIBSTEMS:
+                issue = self._int_to_letter(self._get_issue(record))
 
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
