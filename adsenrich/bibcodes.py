@@ -504,7 +504,9 @@ class BibcodeGenerator(object):
             # note this should already be caught by the -D option in
             # ADSManualParser run.py, but if not, here it is:
             elif bibstem in IEEE_COL14_BIBSTEMS:
+                (pageid, is_letter) = self._get_normal_pagenum(record)
                 issue = self._int_to_letter(self._get_issue(record))
+                is_letter = False
 
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
