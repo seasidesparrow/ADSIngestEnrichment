@@ -1407,6 +1407,12 @@ IEEE_BIBSTEMS = [
     "ISenL",
     "IMagL",
     "ITQE."
+    "IAESM",
+    "Compr",
+    "ITPro",
+    "ILSL.",
+    "ISSCM",
+    "ICICo",
 ]
 IEEE_COL14_BIBSTEMS = [
     "IAEMS",
@@ -1451,7 +1457,13 @@ IEEE_COL14_BIBSTEMS = [
     "ITSMg",
     "IVTM.",
     "IWC..",
-    "IWEM."
+    "IWEM.",
+    "IAESM",
+    "Compr",
+    "ITPro",
+    "ILSL.",
+    "ISSCM",
+    "ICICo",
 ]
 
 IEEE_SPECPAGE = [
