@@ -1412,7 +1412,7 @@ IEEE_BIBSTEMS = [
     "ITPro",
     "ILSL.",
     "ISSCM",
-    "ICICo",
+    "IClCo",
 ]
 IEEE_COL14_BIBSTEMS = [
     "IAEMS",
@@ -1463,7 +1463,7 @@ IEEE_COL14_BIBSTEMS = [
     "ITPro",
     "ILSL.",
     "ISSCM",
-    "ICICo",
+    "IClCo",
 ]
 
 IEEE_SPECPAGE = [
