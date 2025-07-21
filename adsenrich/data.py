@@ -1414,6 +1414,8 @@ IEEE_BIBSTEMS = [
     "ISSCM",
     "IClCo",
     "IEMBM",
+    "ICAP",
+    "IPERv",
 ]
 IEEE_COL14_BIBSTEMS = [
     "IAEMS",
@@ -1465,7 +1467,9 @@ IEEE_COL14_BIBSTEMS = [
     "ILSL.",
     "ISSCM",
     "IClCo",
-    "IEMBM"
+    "IEMBM",
+    "ICAP",
+    "IPERv",
 ]
 
 IEEE_SPECPAGE = [
