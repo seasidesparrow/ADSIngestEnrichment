@@ -530,7 +530,6 @@ class BibcodeGenerator(object):
                 pageid = pageid.rjust(4, ".")
 
             try:
-                print("heya...", year, bibstem, volume, issue, pageid, author_init)
                 bibcode = year + bibstem + volume + issue + pageid + author_init
                 if len(bibcode) != 19:
                     raise Exception("Malformed bibcode, wrong length! %s" % bibcode)
