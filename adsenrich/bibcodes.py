@@ -399,6 +399,9 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue = is_letter
+                if bibstem == "GeoJI":
+                    issue=""
+                    pageid = re.sub(r"[a-zA-Z]", "", pageid)
 
             elif bibstem in AIP_BIBSTEMS:
                 # AIP: AIP Conf gets special handling
@@ -527,6 +530,7 @@ class BibcodeGenerator(object):
                 pageid = pageid.rjust(4, ".")
 
             try:
+                print("heya...", year, bibstem, volume, issue, pageid, author_init)
                 bibcode = year + bibstem + volume + issue + pageid + author_init
                 if len(bibcode) != 19:
                     raise Exception("Malformed bibcode, wrong length! %s" % bibcode)
