@@ -399,6 +399,9 @@ class BibcodeGenerator(object):
                 if is_letter:
                     if not issue:
                         issue = is_letter
+                if bibstem == "GeoJI":
+                    issue=""
+                    pageid = re.sub(r"[a-zA-Z]", "", pageid)
 
             elif bibstem in AIP_BIBSTEMS:
                 # AIP: AIP Conf gets special handling
@@ -499,6 +502,14 @@ class BibcodeGenerator(object):
                     issue = None
                 except:
                     pass
+
+            # for records that need "page:1" replaced with doi tail
+            # note this should already be caught by the -D option in
+            # ADSManualParser run.py, but if not, here it is:
+            elif bibstem in IEEE_COL14_BIBSTEMS:
+                (pageid, is_letter) = self._get_normal_pagenum(record)
+                issue = self._int_to_letter(self._get_issue(record))
+                is_letter = False
 
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
