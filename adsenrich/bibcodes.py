@@ -197,7 +197,8 @@ class BibcodeGenerator(object):
     def _get_converted_pagenum(self, record):
         try:
             (page, is_letter) = self._get_pagenum(record)
-            page = page[-5:]
+            if re.match(r"\D", page):
+                page = page[-5:]
             if is_letter != "D":
                 (page, is_letter) = self._deletter_page(page)
             if page:
