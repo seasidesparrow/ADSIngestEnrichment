@@ -7,7 +7,7 @@ from adsenrich.data import *
 from adsenrich.exceptions import *
 from adsenrich.utils import issn2info
 
-proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), " ../"))
+proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
 conf = load_config(proj_home=proj_home)
 
 
