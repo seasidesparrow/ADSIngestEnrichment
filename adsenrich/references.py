@@ -1,3 +1,4 @@
+import html
 import os
 
 from adsputils import load_config
@@ -9,6 +10,13 @@ from adsenrich.utils import issn2info
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
 conf = load_config(proj_home=proj_home)
+
+def de_dash_entity(input_string):
+    output_string = input_string
+    dash_entities = ["&mdash;", "&ndash;", "&hyphen;", "&minus;", "&dash;", "&horbar;", "&x2012;"]
+    for d in dash_entities:
+        output_string = output_string.replace(d, "-")
+    return output_string
 
 
 class ReferenceWriter(object):
@@ -143,10 +151,11 @@ class ReferenceWriter(object):
                     if p.get("DOI", None):
                         doi = p.get("DOI")
                         doi = doi.replace("/", "_")
+                        newdoi = de_dash_entity(doi)
                         bibstem = self.bibcode[4:9].rstrip(".")
                         volume = self.data.get("publication", {}).get("volumeNum", "").rjust(4, "0")
                         output_dir = self.basedir + bibstem + "/" + volume
-                        self.output_file = output_dir + "/" + doi + ".cr.xml"
+                        self.output_file = output_dir + "/" + newdoi + ".cr.xml"
             else:
                 self._create_output_file_name()
 
