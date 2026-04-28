@@ -13,7 +13,9 @@ conf = load_config(proj_home=proj_home)
 
 def de_dash_entity(input_string):
     output_string = input_string
-    dash_entities = ["&mdash;", "&ndash;", "&hyphen;", "&minus;", "&dash;", "&horbar;", "&x2012;"]
+    dash_entities = ["&mdash;", "&ndash;", "&hyphen;", "&minus;", "&dash;", "&horbar;", "&x2010;", "&x2011;", "&x2012;", "&x2013;", "&x2014;", "&#8208;", "&#8209;", "&#8210;", "&#8211;", "&#8212;"]
+    unicode_entities = [html.unescape(x) for x in dash_entities]
+    dash_entities.extend(unicode_entities)
     for d in dash_entities:
         output_string = output_string.replace(d, "-")
     return output_string
