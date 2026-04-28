@@ -7,7 +7,7 @@ from adsenrich.data import *
 from adsenrich.exceptions import *
 from adsenrich.utils import issn2info
 
-proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
+proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), " ../"))
 conf = load_config(proj_home=proj_home)
 
 
@@ -136,7 +136,16 @@ class ReferenceWriter(object):
             self._extract_refs_from_record()
             if not self.reference_list:
                 raise NoReferencesException("There are no references in this record.")
-            self._create_output_file_name()
+            if self.reference_source == "cr":
+                pids = self.data.get("persistentIDs", [])
+                doi = "no_doi_found"
+                for p in pids:
+                    if p.get("DOI", None):
+                        doi = p.get("DOI")
+                        doi = doi.replace("/", "_")
+                        self.output_file = doi + ".cr.xml"
+            else:
+                self._create_output_file_name()
 
             if not self.output_file:
                 raise NoOutFileException("Missing output file name.")
