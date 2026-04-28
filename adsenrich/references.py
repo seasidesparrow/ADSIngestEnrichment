@@ -157,7 +157,7 @@ class ReferenceWriter(object):
                         bibstem = self.bibcode[4:9].rstrip(".")
                         volume = self.data.get("publication", {}).get("volumeNum", "").rjust(4, "0")
                         output_dir = self.basedir + bibstem + "/" + volume
-                        self.output_file = output_dir + "/" + newdoi + ".cr.xml"
+                        self.output_file = output_dir + "/" + newdoi + ".xref.xml"
             else:
                 self._create_output_file_name()
 
