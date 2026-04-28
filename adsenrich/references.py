@@ -143,7 +143,8 @@ class ReferenceWriter(object):
                     if p.get("DOI", None):
                         doi = p.get("DOI")
                         doi = doi.replace("/", "_")
-                        self.output_file = doi + ".cr.xml"
+                        output_dir = self.basedir + bibstem + "/" + volume
+                        self.output_file = output_dir + "/" + doi + ".cr.xml"
             else:
                 self._create_output_file_name()
 
