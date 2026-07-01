@@ -4,13 +4,19 @@ import re
 import roman
 import string
 
-from adsputils import load_config
+from adsputils import load_config, setup_logging
 
 from adsenrich.data import *
 from adsenrich.utils import issn2info, name2bib, u2asc
 
 proj_home = os.getenv("PWD", None)
 conf = load_config(proj_home=proj_home)
+logger = setup_logging(
+    "bibcodes.py",
+    proj_home=proj_home,
+    level=conf.get("LOGGING_LEVEL", "INFO"),
+    attach_stdout=conf.get("LOG_STDOUT", False),
+)
 
 REGEX_PAGE_ROMAN_NUMERAL = re.compile(r'^[IVXLCDMivxlcdm\.\+\s,-]+$')
 
@@ -51,6 +57,20 @@ class BibcodeGenerator(object):
             return string.ascii_letters[int(integer) - 1]
         except Exception as err:
             return integer
+
+    def _mod_leading_zeroes(self, ident, delete=True, rep_char="."):
+        if type(ident) == int:
+            ident = str(ident)
+        if delete:
+            ident = ident.lstrip("0")
+        else:
+            while i < len(ident):
+                if ident[i] == "0":
+                    ident = ident[:i] + rep_char + ident[i+1:]
+                    i += 1
+                else:
+                    break
+        return ident
 
     def _get_author_init(self, record):
         author_init = "."
@@ -108,7 +128,7 @@ class BibcodeGenerator(object):
                     vol_list = volume.strip().split("-")
                     if vol_list:
                         volume = vol_list[0]
-                if REGEX_PAGE_ROMAN_NUMERAL.search(volume):
+                if bibstem != "MPEC." and REGEX_PAGE_ROMAN_NUMERAL.search(volume):
                     volume = str(roman.fromRoman(volume.upper()))
             except Exception as err:
                 volume = "."
@@ -149,7 +169,7 @@ class BibcodeGenerator(object):
                 else:
                     page = "."
             page = page.replace(",", "")
-            if REGEX_PAGE_ROMAN_NUMERAL.search(page):
+            if bibstem != "MPEC." and REGEX_PAGE_ROMAN_NUMERAL.search(page):
                 page = str(roman.fromRoman(page.upper()))
                 is_letter = "D"
             return (page, is_letter)
@@ -215,9 +235,24 @@ class BibcodeGenerator(object):
             is_letter = None
         return page, is_letter
 
+    def _get_spie_page(self, record):
+        try:
+            volume = self._get_volume(record)
+            pagination = record.get("pagination", {})
+            fpage = pagination.get("firstPage", None)
+            if fpage:
+                if volume in fpage:
+                    fpage = fpage.replace(volume, "")
+                    if len(fpage) > 4:
+                        fpage = fpage[-4:]
+        except Exception as err:
+            fpage = None
+            is_letter = None
+        return fpage, "E"
+
     def _deletter_aps(self, record):
         try:
-            pagination = record.get("pagination", None)
+            pagination = record.get("pagination", {})
             is_letter = None
             if pagination:
                 fpage = pagination.get("firstPage", None)
@@ -263,6 +298,7 @@ class BibcodeGenerator(object):
                             issn = issn[0:4] + "-" + issn[4:]
                         bibstem = ISSN_DICT.get(issn, None)
                         if bibstem:
+                            self.bibstem = bibstem
                             return bibstem
                         if not bibstem:
                             bibstem = issn2info(
@@ -274,6 +310,7 @@ class BibcodeGenerator(object):
                                 return_info="bibstem",
                             )
                         if bibstem:
+                            self.bibstem = bibstem
                             return bibstem
                 if not bibstem:
                     journal_name = record.get("publication", {}).get("pubName", None)
@@ -286,6 +323,7 @@ class BibcodeGenerator(object):
                             name=journal_name,
                         )
         if bibstem:
+            self.bibstem = bibstem
             return bibstem
         else:
             raise BibstemException("Bibstem not found.")
@@ -321,7 +359,7 @@ class BibcodeGenerator(object):
 
             # Special bibstem, page, volume, issue handling
             # start with ArXiv and arxiv-cat bibcodes
-            if bibstem == 'arXiv':
+            if bibstem == "arXiv":
                 pubids = record.get("publisherIDs")
                 for pid in pubids:
                     if pid.get("attribute", "") == "urn":
@@ -340,6 +378,31 @@ class BibcodeGenerator(object):
                             bibcode = year + bibstem + identfull + author_init
                         return bibcode
                 pass
+
+            elif bibstem == "PASA.":
+                eid = record.get("pagination", {}).get("electronicID", None)
+                volume = record.get("publication", {}).get("volumeNum", "")
+                if len(volume) < 4:
+                    volume = volume.rjust(4, ".")
+                issue = None
+                if eid and eid[0] in string.ascii_lowercase:
+                    eid = self._mod_leading_zeroes(eid[1:], delete=True)
+                    pageid = eid
+                else:
+                    pageid = None
+
+            elif bibstem == "PNAS.":
+                eid = record.get("pagination", {}).get("electronicID", "")
+                issue = None
+                if eid and eid[0] in string.ascii_lowercase:
+                    pageid = eid[3:8]
+                    volume = eid[8:]
+                else:
+                    pageid = None
+                    volume = ""
+                if len(volume) < 4:
+                    volume = volume.rjust(".", 4)
+
             elif bibstem in IOP_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
                 (pageid, is_letter) = self._get_converted_pagenum(record)
@@ -396,14 +459,23 @@ class BibcodeGenerator(object):
                         issue = is_letter
 
             elif bibstem in OUP_BIBSTEMS:
-                # APS get converted_pagenum/letters for six+ digit pages
-                (pageid, is_letter) = self._get_converted_pagenum(record)
-                if is_letter:
-                    if not issue:
-                        issue = is_letter
-                if bibstem == "GeoJI":
-                    issue=""
-                    pageid = re.sub(r"[a-zA-Z]", "", pageid)
+                # OUP get converted_pagenum/letters for six+ digit pages
+                if bibstem != "PTEP.":
+                    (pageid, is_letter) = self._get_converted_pagenum(record)
+                    if is_letter:
+                        if not issue:
+                            issue = is_letter
+                    if bibstem == "GeoJI":
+                        issue=""
+                        pageid = re.sub(r"[a-zA-Z]", "", pageid)
+                else:
+                    (pageid, is_letter) = self._get_pagenum(record)
+                    issue = record.get("publication", {}).get("issueNum", None)
+                    volume = record.get("publication", {}).get("volumeNum", "....")
+                    if issue:
+                        issue = self._int_to_letter(issue)
+                        pageid = pageid[-4:]
+
 
             elif bibstem in AIP_BIBSTEMS:
                 # AIP: AIP Conf gets special handling
@@ -513,6 +585,19 @@ class BibcodeGenerator(object):
                 issue = self._int_to_letter(self._get_issue(record))
                 is_letter = False
 
+            # Special handling for SPIE
+            elif bibstem == "SPIE.":
+                (pageid, is_letter) = self._get_spie_page(record)
+                volume = self._get_volume(record)
+                issue = is_letter
+                if len(volume) < 4:
+                    volume.rjust(4, ".")
+                elif len(volume) == 5:
+                    bibstem = "SPIE"
+                elif len(volume) > 5:
+                    bibstem = "SPIE"
+                    volume = volume[-5:]
+
             else:
                 (pageid, is_letter) = self._get_normal_pagenum(record)
                 if is_letter:
@@ -536,5 +621,6 @@ class BibcodeGenerator(object):
                 if len(bibcode) != 19:
                     raise Exception("Malformed bibcode, wrong length! %s" % bibcode)
             except Exception as err:
+                logger.error("Bibcodes.py generated an invalid bibcode, returning None: %s" % bibcode)
                 bibcode = None
             return bibcode
