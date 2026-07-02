@@ -298,7 +298,6 @@ class BibcodeGenerator(object):
                             issn = issn[0:4] + "-" + issn[4:]
                         bibstem = ISSN_DICT.get(issn, None)
                         if bibstem:
-                            self.bibstem = bibstem
                             return bibstem
                         if not bibstem:
                             bibstem = issn2info(
@@ -310,7 +309,6 @@ class BibcodeGenerator(object):
                                 return_info="bibstem",
                             )
                         if bibstem:
-                            self.bibstem = bibstem
                             return bibstem
                 if not bibstem:
                     journal_name = record.get("publication", {}).get("pubName", None)
@@ -323,7 +321,6 @@ class BibcodeGenerator(object):
                             name=journal_name,
                         )
         if bibstem:
-            self.bibstem = bibstem
             return bibstem
         else:
             raise BibstemException("Bibstem not found.")
