@@ -398,7 +398,7 @@ class BibcodeGenerator(object):
                     pageid = None
                     volume = ""
                 if len(volume) < 4:
-                    volume = volume.rjust(".", 4)
+                    volume = volume.rjust(4, ".")
 
             elif bibstem in IOP_BIBSTEMS:
                 # IOP get converted_pagenum/letters for six+ digit pages
