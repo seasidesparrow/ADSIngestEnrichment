@@ -1502,7 +1502,7 @@ REFSOURCE_DICT = {
     "jats": "jats.xml",
     "egu": "egu.xml",
     "nlm": "nlm.xml",
-    "copernicus": "egu.xml",
+    "copernicus": "copernicus.xml",
     "wiley": "wiley2.xml",
     "wiley2": "wiley2.xml",
     "mdpi": "mdpi.xml",
